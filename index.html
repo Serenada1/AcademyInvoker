@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>МАНА Бот</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
       margin: 0;
@@ -68,6 +69,21 @@
     .boost:hover {
       border-color: #fff;
     }
+    .save-button {
+      margin-top: 25px;
+      padding: 12px 24px;
+      background: #03dac5;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .save-button:hover {
+      background: #00bfa5;
+    }
   </style>
 </head>
 <body>
@@ -81,8 +97,12 @@
     <div class="boost" onclick="buyBoost(250)">+АвтоТАП (250)</div>
     <div class="boost" onclick="buyBoost(500)">+Крит.Удар (500)</div>
   </div>
+  <button class="save-button" onclick="sendDataToBot()">💾 Сохранить результат</button>
 
   <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
     let mana = 0;
     let taps = 0;
     const manaCount = document.getElementById("mana-count");
@@ -110,6 +130,12 @@
         alert("Недостаточно МАНЫ!");
       }
     }
+
+    function sendDataToBot() {
+      const data = { mana, taps };
+      tg.sendData(JSON.stringify(data));
+    }
   </script>
 </body>
 </html>
+
