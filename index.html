@@ -1,28 +1,114 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Мой Telegram Mini App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>МАНА Бот</title>
   <style>
     body {
+      margin: 0;
       font-family: sans-serif;
-      margin: 20px;
+      background: #121212;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      height: 100vh;
+      padding: 20px;
     }
-    button {
+    .mana {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .level-bar {
+      width: 80%;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .level-fill {
+      height: 100%;
+      background: #4caf50;
+      width: 0%;
+    }
+    .tap-button {
+      width: 150px;
+      height: 150px;
+      background: #6200ea;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s ease;
+    }
+    .tap-button:active {
+      transform: scale(0.95);
+    }
+    .boosts {
+      margin-top: 30px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .boost {
+      background: #1e1e1e;
       padding: 10px 20px;
-      font-size: 16px;
+      border: 2px solid #555;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .boost:hover {
+      border-color: #fff;
     }
   </style>
 </head>
 <body>
-  <h1>Привет из Telegram Mini App!</h1>
-  <button onclick="sendData()">Отправить данные боту</button>
+  <div class="mana">МАНА: <span id="mana-count">0</span></div>
+  <div class="level-bar">
+    <div class="level-fill" id="level-fill"></div>
+  </div>
+  <div class="tap-button" id="tap-btn">ТАП!</div>
+  <div class="boosts">
+    <div class="boost" onclick="buyBoost(100)">+2x Мана (100)</div>
+    <div class="boost" onclick="buyBoost(250)">+АвтоТАП (250)</div>
+    <div class="boost" onclick="buyBoost(500)">+Крит.Удар (500)</div>
+  </div>
 
   <script>
-    function sendData() {
-      Telegram.WebApp.sendData("Привет, я из WebApp!");
+    let mana = 0;
+    let taps = 0;
+    const manaCount = document.getElementById("mana-count");
+    const levelFill = document.getElementById("level-fill");
+    const tapBtn = document.getElementById("tap-btn");
+
+    tapBtn.addEventListener("click", () => {
+      mana++;
+      taps++;
+      updateUI();
+    });
+
+    function updateUI() {
+      manaCount.textContent = mana;
+      let levelProgress = (taps % 3000) / 30;
+      levelFill.style.width = `${levelProgress}%`;
+    }
+
+    function buyBoost(cost) {
+      if (mana >= cost) {
+        mana -= cost;
+        alert("Буст куплен! (пока просто алерт)");
+        updateUI();
+      } else {
+        alert("Недостаточно МАНЫ!");
+      }
     }
   </script>
 </body>
