@@ -3,19 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>МАНА Бот</title>
-  <script src="https://telegram.org/js/telegram-web-app.js?v=5"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <title>МАНА Бот — Dota Style</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
       margin: 0;
-      font-family: 'Cinzel', serif;
-      background: url('https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/backgrounds/bg_miniprofile.jpg') no-repeat center center fixed;
-      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(#0f0f17, #1c1c28);
+      background-image: url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
       color: #f0e6d2;
       display: flex;
       flex-direction: column;
@@ -23,20 +18,25 @@
       justify-content: start;
       height: 100vh;
       padding: 20px;
-      text-shadow: 1px 1px 2px #000;
     }
 
     .mana {
-      font-size: 28px;
+      font-size: 26px;
       margin-bottom: 10px;
       font-weight: bold;
+      color: #87CEFA;
+      text-shadow: 0 0 6px #00ffff;
+    }
+
+    .mana::before {
+      content: "💠 ";
     }
 
     .level-bar {
       width: 80%;
       height: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 2px solid #6f6f6f;
+      background: #2a2a3d;
+      border: 1px solid #555;
       border-radius: 10px;
       overflow: hidden;
       margin-bottom: 20px;
@@ -44,32 +44,33 @@
 
     .level-fill {
       height: 100%;
-      background: linear-gradient(90deg, #94c33c, #4d7f14);
+      background: linear-gradient(90deg, #32cd32, #66ff66);
       width: 0%;
       transition: width 0.3s ease;
     }
 
     .tap-button {
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle at 30% 30%, #9654e0, #3c1361);
+      width: 170px;
+      height: 170px;
+      background: radial-gradient(circle at 30% 30%, #b39ddb, #673ab7);
+      border: 3px solid #d1c4e9;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 30px;
       font-weight: bold;
       color: #fff;
       cursor: pointer;
       user-select: none;
-      transition: transform 0.1s ease, box-shadow 0.3s;
-      box-shadow: inset 0 0 10px #000, 0 0 20px #793db3;
-      border: 4px solid #bb86fc;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+      box-shadow: inset 0 0 20px #4527a0, 0 0 15px #9575cd;
+      text-shadow: 0 0 8px #fff;
     }
 
     .tap-button:active {
       transform: scale(0.92);
-      box-shadow: 0 0 10px #bb86fc;
+      box-shadow: inset 0 0 30px #311b92, 0 0 20px #7e57c2;
     }
 
     .boosts {
@@ -81,51 +82,51 @@
     }
 
     .boost {
-      background: rgba(20, 20, 20, 0.7);
+      background: linear-gradient(#2a2a2a, #1a1a1a);
       padding: 12px 20px;
-      border: 2px solid #c4a000;
-      border-radius: 14px;
+      border: 2px solid #999;
+      border-radius: 12px;
       cursor: pointer;
       transition: 0.2s;
-      box-shadow: 0 0 10px #c4a000 inset;
+      box-shadow: 0 0 10px #666;
       font-weight: bold;
-      color: #fff;
+      color: #f0e6d2;
     }
 
     .boost:hover {
-      border-color: #ffeb3b;
-      box-shadow: 0 0 20px #ffeb3b inset;
+      border-color: gold;
+      box-shadow: 0 0 20px gold;
     }
 
     .save-button {
       margin-top: 25px;
       padding: 14px 28px;
-      background: linear-gradient(to bottom, #e5c100, #a88b00);
+      background: #ffca28;
       color: #000;
-      border: 2px solid #5d4b00;
-      border-radius: 12px;
+      border: none;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s, box-shadow 0.3s;
-      box-shadow: 0 0 12px #e5c100;
+      transition: 0.3s;
+      box-shadow: 0 0 12px #ffca28;
     }
 
     .save-button:hover {
-      background: linear-gradient(to bottom, #ffe600, #c9a500);
-      box-shadow: 0 0 20px #ffe600;
+      background: #ffc107;
+      box-shadow: 0 0 20px #ffeb3b;
     }
   </style>
 </head>
 <body>
-  <div class="mana">💠 МАНА: <span id="mana-count">0</span></div>
+  <div class="mana">МАНА: <span id="mana-count">0</span></div>
   <div class="level-bar">
     <div class="level-fill" id="level-fill"></div>
   </div>
   <div class="tap-button" id="tap-btn">🜁 ТАП!</div>
   <div class="boosts">
     <div class="boost" onclick="buyBoost(100)">Arcane Rune (100)</div>
-    <div class="boost" onclick="buyBoost(250)">Totem of Auto-Tap (250)</div>
+    <div class="boost" onclick="buyBoost(250)">Auto-Tap Totem (250)</div>
     <div class="boost" onclick="buyBoost(500)">Crit Mask (500)</div>
   </div>
   <button class="save-button" onclick="sendDataToBot()">💾 Сохранить</button>
@@ -162,6 +163,7 @@
       manaCount.textContent = mana;
       let levelProgress = (taps % 3000) / 30;
       levelFill.style.width = `${levelProgress}%`;
+
       localStorage.setItem("mana", mana);
       localStorage.setItem("taps", taps);
     }
