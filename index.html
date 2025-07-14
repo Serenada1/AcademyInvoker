@@ -109,9 +109,11 @@
     const levelFill = document.getElementById("level-fill");
     const tapBtn = document.getElementById("tap-btn");
 
-    // Загружаем прогресс из localStorage
+    // Загружаем прогресс из браузера
     if (localStorage.getItem("mana")) {
       mana = parseInt(localStorage.getItem("mana"));
+    }
+    if (localStorage.getItem("taps")) {
       taps = parseInt(localStorage.getItem("taps"));
     }
     updateUI();
@@ -127,7 +129,7 @@
       let levelProgress = (taps % 3000) / 30;
       levelFill.style.width = `${levelProgress}%`;
 
-      // Сохраняем в localStorage
+      // Сохраняем прогресс в браузере
       localStorage.setItem("mana", mana);
       localStorage.setItem("taps", taps);
     }
