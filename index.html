@@ -2,19 +2,18 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌟 МАНА Бот</title>
-  <script src="https://telegram.org/js/telegram-web-app.js?v=2"></script>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>МАНА Бот</title>
+  <script src="https://telegram.org/js/telegram-web-app.js?v=3"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #2c003e, #001f3f, #003f5c);
-      background-size: 400% 400%;
-      animation: gradientShift 12s ease infinite;
+      background: linear-gradient(135deg, #1e1e2f, #2b2b45);
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -22,61 +21,49 @@
       justify-content: start;
       height: 100vh;
       padding: 20px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    @keyframes gradientShift {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
     }
 
     .mana {
-      font-size: 26px;
+      font-size: 28px;
       margin-bottom: 10px;
       font-weight: bold;
     }
 
     .level-bar {
       width: 80%;
-      height: 22px;
+      height: 20px;
       background: #333;
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
       margin-bottom: 20px;
-      box-shadow: 0 0 10px #000;
     }
 
     .level-fill {
       height: 100%;
-      background: linear-gradient(90deg, #00ffcc, #00bfff);
+      background: linear-gradient(90deg, #4caf50, #8bc34a);
       width: 0%;
-      transition: width 0.4s ease;
+      transition: width 0.3s ease;
     }
 
     .tap-button {
       width: 160px;
       height: 160px;
-      background: radial-gradient(circle at 30% 30%, #ff80ab, #c51162);
+      background: radial-gradient(circle at 30% 30%, #7c4dff, #6200ea);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: bold;
       color: #fff;
       cursor: pointer;
       user-select: none;
       transition: transform 0.1s ease;
-      box-shadow: 0 0 25px #f50057, 0 0 50px #f50057 inset;
-      position: relative;
-      z-index: 1;
+      box-shadow: 0 0 20px #6200ea;
     }
 
     .tap-button:active {
       transform: scale(0.95);
-      box-shadow: 0 0 40px #ff4081;
     }
 
     .boosts {
@@ -88,13 +75,13 @@
     }
 
     .boost {
-      background: #1e1e1e;
-      padding: 10px 20px;
-      border: 2px solid #555;
-      border-radius: 12px;
+      background: #222;
+      padding: 12px 20px;
+      border: 2px solid #777;
+      border-radius: 14px;
       cursor: pointer;
       transition: 0.2s;
-      box-shadow: 0 0 8px #555 inset;
+      box-shadow: 0 0 8px #777 inset;
       font-weight: bold;
     }
 
@@ -105,15 +92,15 @@
 
     .save-button {
       margin-top: 25px;
-      padding: 12px 24px;
+      padding: 14px 28px;
       background: #03dac5;
-      color: black;
+      color: #000;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
-      cursor: pointer;
       font-weight: bold;
-      transition: background 0.3s;
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s;
       box-shadow: 0 0 12px #03dac5;
     }
 
@@ -121,34 +108,18 @@
       background: #00bfa5;
       box-shadow: 0 0 20px #00bfa5;
     }
-
-    .flash {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: flash 0.5s ease-out forwards;
-      z-index: 0;
-    }
-
-    @keyframes flash {
-      0% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(2); }
-    }
   </style>
 </head>
 <body>
-  <div class="mana">🌟 МАНА: <span id="mana-count">0</span></div>
+  <div class="mana">МАНА: <span id="mana-count">0</span></div>
   <div class="level-bar">
     <div class="level-fill" id="level-fill"></div>
   </div>
   <div class="tap-button" id="tap-btn">ТАП!</div>
   <div class="boosts">
-    <div class="boost" onclick="buyBoost(100)">✨ 2x Мана (100)</div>
-    <div class="boost" onclick="buyBoost(250)">⚙️ АвтоТАП (250)</div>
-    <div class="boost" onclick="buyBoost(500)">💥 Крит.Удар (500)</div>
+    <div class="boost" onclick="buyBoost(100)">+2x Мана (100)</div>
+    <div class="boost" onclick="buyBoost(250)">+АвтоТАП (250)</div>
+    <div class="boost" onclick="buyBoost(500)">+Крит.Удар (500)</div>
   </div>
   <button class="save-button" onclick="sendDataToBot()">💾 Сохранить результат</button>
 
@@ -162,24 +133,17 @@
     const levelFill = document.getElementById("level-fill");
     const tapBtn = document.getElementById("tap-btn");
 
+    // Загружаем прогресс из localStorage
     if (localStorage.getItem("mana")) {
       mana = parseInt(localStorage.getItem("mana"), 10);
       taps = parseInt(localStorage.getItem("taps"), 10);
     }
-
     updateUI();
 
-    tapBtn.addEventListener("click", (e) => {
+    tapBtn.addEventListener("click", () => {
       mana++;
       taps++;
       updateUI();
-
-      const flash = document.createElement("div");
-      flash.className = "flash";
-      flash.style.left = `${e.clientX - 30}px`;
-      flash.style.top = `${e.clientY - 30}px`;
-      document.body.appendChild(flash);
-      setTimeout(() => flash.remove(), 500);
     });
 
     function updateUI() {
@@ -194,7 +158,7 @@
     function buyBoost(cost) {
       if (mana >= cost) {
         mana -= cost;
-        alert("Буст куплен! (пока просто эффект)");
+        alert("Буст куплен! (пока просто алерт)");
         updateUI();
       } else {
         alert("Недостаточно МАНЫ!");
