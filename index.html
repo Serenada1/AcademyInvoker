@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>МАНА Бот — Dota Style</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>МАНА Бот</title>
+  <script src="https://telegram.org/js/telegram-web-app.js?v=3"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(#0f0f17, #1c1c28);
-      background-image: url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
-      color: #f0e6d2;
+      background: radial-gradient(circle at center, #0e0e1a, #1e1e2f);
+      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -21,100 +24,97 @@
     }
 
     .mana {
-      font-size: 26px;
+      font-size: 28px;
       margin-bottom: 10px;
       font-weight: bold;
-      color: #87CEFA;
-      text-shadow: 0 0 6px #00ffff;
-    }
-
-    .mana::before {
-      content: "💠 ";
     }
 
     .level-bar {
-      width: 80%;
-      height: 20px;
-      background: #2a2a3d;
-      border: 1px solid #555;
-      border-radius: 10px;
+      width: 90%;
+      height: 22px;
+      background: #333;
+      border-radius: 12px;
       overflow: hidden;
       margin-bottom: 20px;
+      border: 2px solid #555;
     }
 
     .level-fill {
       height: 100%;
-      background: linear-gradient(90deg, #32cd32, #66ff66);
+      background: linear-gradient(90deg, #ff9800, #ffc107);
       width: 0%;
       transition: width 0.3s ease;
     }
 
     .tap-button {
-      width: 170px;
-      height: 170px;
-      background: radial-gradient(circle at 30% 30%, #b39ddb, #673ab7);
-      border: 3px solid #d1c4e9;
+      width: 180px;
+      height: 180px;
       border-radius: 50%;
+      cursor: pointer;
+      user-select: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 30px;
-      font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.1s ease, box-shadow 0.2s ease;
-      box-shadow: inset 0 0 20px #4527a0, 0 0 15px #9575cd;
-      text-shadow: 0 0 8px #fff;
+      transition: transform 0.1s ease;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-bottom: 20px;
     }
 
     .tap-button:active {
       transform: scale(0.92);
-      box-shadow: inset 0 0 30px #311b92, 0 0 20px #7e57c2;
+    }
+
+    .exort-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(255, 100, 0, 0.8);
     }
 
     .boosts {
-      margin-top: 30px;
+      margin-top: 10px;
       display: flex;
-      gap: 15px;
+      gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
     }
 
     .boost {
-      background: linear-gradient(#2a2a2a, #1a1a1a);
-      padding: 12px 20px;
-      border: 2px solid #999;
-      border-radius: 12px;
+      background: #222;
+      padding: 12px 18px;
+      border: 2px solid #777;
+      border-radius: 14px;
       cursor: pointer;
       transition: 0.2s;
-      box-shadow: 0 0 10px #666;
+      box-shadow: 0 0 8px #777 inset;
       font-weight: bold;
-      color: #f0e6d2;
     }
 
     .boost:hover {
-      border-color: gold;
-      box-shadow: 0 0 20px gold;
+      border-color: #fff;
+      box-shadow: 0 0 15px #fff inset;
     }
 
     .save-button {
       margin-top: 25px;
       padding: 14px 28px;
-      background: #ffca28;
+      background: #03dac5;
       color: #000;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 0 12px #ffca28;
+      transition: background 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 12px #03dac5;
     }
 
     .save-button:hover {
-      background: #ffc107;
-      box-shadow: 0 0 20px #ffeb3b;
+      background: #00bfa5;
+      box-shadow: 0 0 20px #00bfa5;
     }
   </style>
 </head>
@@ -123,13 +123,18 @@
   <div class="level-bar">
     <div class="level-fill" id="level-fill"></div>
   </div>
-  <div class="tap-button" id="tap-btn">🜁 ТАП!</div>
-  <div class="boosts">
-    <div class="boost" onclick="buyBoost(100)">Arcane Rune (100)</div>
-    <div class="boost" onclick="buyBoost(250)">Auto-Tap Totem (250)</div>
-    <div class="boost" onclick="buyBoost(500)">Crit Mask (500)</div>
+
+  <div class="tap-button" id="tap-btn">
+    <img src="exort.png" alt="Exort Sphere" class="exort-img" />
   </div>
-  <button class="save-button" onclick="sendDataToBot()">💾 Сохранить</button>
+
+  <div class="boosts">
+    <div class="boost" onclick="buyBoost(100)">+2x Мана (100)</div>
+    <div class="boost" onclick="buyBoost(250)">+АвтоТАП (250)</div>
+    <div class="boost" onclick="buyBoost(500)">+Крит.Удар (500)</div>
+  </div>
+
+  <button class="save-button" onclick="sendDataToBot()">💾 Сохранить результат</button>
 
   <script>
     const tg = window.Telegram.WebApp;
@@ -141,16 +146,11 @@
     const levelFill = document.getElementById("level-fill");
     const tapBtn = document.getElementById("tap-btn");
 
-    try {
-      if (localStorage.getItem("mana")) {
-        mana = parseInt(localStorage.getItem("mana"), 10);
-        taps = parseInt(localStorage.getItem("taps"), 10);
-      }
-    } catch (e) {
-      mana = 0;
-      taps = 0;
+    // Загружаем прогресс из localStorage
+    if (localStorage.getItem("mana")) {
+      mana = parseInt(localStorage.getItem("mana"), 10);
+      taps = parseInt(localStorage.getItem("taps"), 10);
     }
-
     updateUI();
 
     tapBtn.addEventListener("click", () => {
@@ -171,10 +171,10 @@
     function buyBoost(cost) {
       if (mana >= cost) {
         mana -= cost;
-        alert("Буст активирован!");
+        alert("Буст куплен! (пока просто алерт)");
         updateUI();
       } else {
-        alert("Недостаточно маны!");
+        alert("Недостаточно МАНЫ!");
       }
     }
 
