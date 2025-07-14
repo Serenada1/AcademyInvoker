@@ -3,184 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <meta name="robots" content="noindex, nofollow" />
   <title>МАНА Бот</title>
-  <script src="https://telegram.org/js/telegram-web-app.js?v=3"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at center, #0e0e1a, #1e1e2f);
-      color: #fff;
+      background: radial-gradient(circle at center, #0c0c1c, #02030a);
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: start;
       height: 100vh;
-      padding: 20px;
+      overflow: hidden;
     }
 
-    .mana {
-      font-size: 28px;
-      margin-bottom: 10px;
+    .top-stats {
+      width: 100%;
+      padding: 12px;
+      display: flex;
+      justify-content: space-around;
+      background: #1f1f2f;
+      color: #fff;
       font-weight: bold;
+      font-size: 14px;
+    }
+
+    .stat-box {
+      background: linear-gradient(145deg, #292940, #3a3a5a);
+      border-radius: 10px;
+      padding: 10px 14px;
+      box-shadow: inset 0 0 5px rgba(255,255,255,0.2);
+    }
+
+    .progress-container {
+      width: 90%;
+      margin: 10px 0;
+    }
+
+    .level-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: #aaa;
     }
 
     .level-bar {
-      width: 90%;
-      height: 22px;
-      background: #333;
-      border-radius: 12px;
+      background: #2a2a3a;
+      height: 8px;
+      border-radius: 5px;
       overflow: hidden;
-      margin-bottom: 20px;
-      border: 2px solid #555;
     }
 
     .level-fill {
       height: 100%;
-      background: linear-gradient(90deg, #ff9800, #ffc107);
-      width: 0%;
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #00bcd4, #2196f3);
+      width: 40%;
     }
 
-    .tap-button {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.1s ease;
-      background: none;
-      border: none;
-      padding: 0;
-      margin-bottom: 20px;
-    }
-
-    .tap-button:active {
-      transform: scale(0.92);
-    }
-
-    .exort-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      border-radius: 50%;
-      box-shadow: 0 0 30px rgba(255, 100, 0, 0.8);
-    }
-
-    .boosts {
+    .center-sphere {
       margin-top: 10px;
+      width: 160px;
+      height: 160px;
+      background-image: url('https://i.imgur.com/BfQLKMG.png');
+      background-size: cover;
+      background-position: center;
+      border-radius: 50%;
+      box-shadow: 0 0 20px #ff5722, inset 0 0 10px #ff9800;
+      animation: pulse 1.5s infinite;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .center-sphere:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 15px #ff5722, inset 0 0 8px #ff9800; }
+      50% { box-shadow: 0 0 30px #ff5722, inset 0 0 12px #ffc107; }
+      100% { box-shadow: 0 0 15px #ff5722, inset 0 0 8px #ff9800; }
+    }
+
+    .energy-counter {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #f44336;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
+      justify-content: space-around;
+      background: #121222;
+      padding: 10px 0;
+      border-top: 1px solid #2c2c3c;
     }
 
-    .boost {
-      background: #222;
-      padding: 12px 18px;
-      border: 2px solid #777;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 0 8px #777 inset;
-      font-weight: bold;
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 10px;
+      color: #ccc;
     }
 
-    .boost:hover {
-      border-color: #fff;
-      box-shadow: 0 0 15px #fff inset;
+    .nav-item img {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 4px;
     }
 
-    .save-button {
-      margin-top: 25px;
-      padding: 14px 28px;
-      background: #03dac5;
-      color: #000;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s, box-shadow 0.3s;
-      box-shadow: 0 0 12px #03dac5;
-    }
-
-    .save-button:hover {
-      background: #00bfa5;
-      box-shadow: 0 0 20px #00bfa5;
-    }
   </style>
 </head>
 <body>
-  <div class="mana">МАНА: <span id="mana-count">0</span></div>
-  <div class="level-bar">
-    <div class="level-fill" id="level-fill"></div>
+  <div class="top-stats">
+    <div class="stat-box">ENERGY<br>4000 LVL 4</div>
+    <div class="stat-box">MULTITAP<br>4000 LVL 4</div>
   </div>
 
-  <div class="tap-button" id="tap-btn">
-    <img src="exort.png" alt="Exort Sphere" class="exort-img" />
+  <div class="progress-container">
+    <div class="level-info">
+      <span>LVL 5</span>
+      <span>LVL 6</span>
+    </div>
+    <div class="level-bar">
+      <div class="level-fill"></div>
+    </div>
   </div>
 
-  <div class="boosts">
-    <div class="boost" onclick="buyBoost(100)">+2x Мана (100)</div>
-    <div class="boost" onclick="buyBoost(250)">+АвтоТАП (250)</div>
-    <div class="boost" onclick="buyBoost(500)">+Крит.Удар (500)</div>
-  </div>
+  <div class="center-sphere" onclick="tap()"></div>
+  <div class="energy-counter" id="energy-display">3336.00</div>
 
-  <button class="save-button" onclick="sendDataToBot()">💾 Сохранить результат</button>
+  <div class="bottom-nav">
+    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/892/892458.png" /><div>Габен</div></div>
+    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/471/471664.png" /><div>Кейсы</div></div>
+    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" /><div>Магазин</div></div>
+    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" /><div>Друзья</div></div>
+    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/1827/1827534.png" /><div>Задания</div></div>
+    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/2883/2883848.png" /><div>Инвентарь</div></div>
+  </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-
-    let mana = 0;
-    let taps = 0;
-    const manaCount = document.getElementById("mana-count");
-    const levelFill = document.getElementById("level-fill");
-    const tapBtn = document.getElementById("tap-btn");
-
-    // Загружаем прогресс из localStorage
-    if (localStorage.getItem("mana")) {
-      mana = parseInt(localStorage.getItem("mana"), 10);
-      taps = parseInt(localStorage.getItem("taps"), 10);
-    }
-    updateUI();
-
-    tapBtn.addEventListener("click", () => {
-      mana++;
-      taps++;
-      updateUI();
-    });
-
-    function updateUI() {
-      manaCount.textContent = mana;
-      let levelProgress = (taps % 3000) / 30;
-      levelFill.style.width = `${levelProgress}%`;
-
-      localStorage.setItem("mana", mana);
-      localStorage.setItem("taps", taps);
-    }
-
-    function buyBoost(cost) {
-      if (mana >= cost) {
-        mana -= cost;
-        alert("Буст куплен! (пока просто алерт)");
-        updateUI();
-      } else {
-        alert("Недостаточно МАНЫ!");
-      }
-    }
-
-    function sendDataToBot() {
-      const data = { mana, taps };
-      tg.sendData(JSON.stringify(data));
+    let energy = 3336;
+    function tap() {
+      energy += 1;
+      document.getElementById("energy-display").textContent = energy.toFixed(2);
     }
   </script>
 </body>
