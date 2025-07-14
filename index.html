@@ -8,13 +8,13 @@
   <meta http-equiv="Expires" content="0" />
   <meta name="robots" content="noindex, nofollow" />
   <title>МАНА Бот</title>
-  <script src="https://telegram.org/js/telegram-web-app.js?v=4"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js?v=6"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
-      color: #ffffff;
+      background: linear-gradient(135deg, #1e1e2f, #2b2b45);
+      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -32,7 +32,7 @@
     .level-bar {
       width: 80%;
       height: 20px;
-      background: #2d2d2d;
+      background: #333;
       border-radius: 10px;
       overflow: hidden;
       margin-bottom: 20px;
@@ -40,7 +40,7 @@
 
     .level-fill {
       height: 100%;
-      background: linear-gradient(90deg, #00ffcc, #00bfa5);
+      background: linear-gradient(90deg, #4caf50, #8bc34a);
       width: 0%;
       transition: width 0.3s ease;
     }
@@ -48,23 +48,26 @@
     .tap-button {
       width: 160px;
       height: 160px;
-      background: linear-gradient(145deg, #3a3a3a, #1e1e1e);
+      background: radial-gradient(circle at 30% 30%, #7c4dff, #6200ea);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: bold;
-      color: #ffffff;
+      color: #fff;
       cursor: pointer;
       user-select: none;
-      transition: transform 0.1s ease, box-shadow 0.2s ease;
-      box-shadow: 0 10px 15px #000, inset -4px -4px 8px #2a2a2a, inset 4px 4px 8px #0a0a0a;
+      transition: transform 0.1s ease, box-shadow 0.3s ease;
+      box-shadow: inset -8px -8px 20px rgba(255,255,255,0.2),
+                  inset 8px 8px 20px rgba(0,0,0,0.4),
+                  0 0 25px #6200ea;
     }
 
     .tap-button:active {
-      transform: translateY(2px);
-      box-shadow: inset 2px 2px 5px #000, inset -2px -2px 5px #1c1c1c;
+      transform: scale(0.95);
+      box-shadow: inset -4px -4px 10px rgba(255,255,255,0.2),
+                  inset 4px 4px 10px rgba(0,0,0,0.4);
     }
 
     .boosts {
@@ -76,26 +79,25 @@
     }
 
     .boost {
-      background: #1c1c1c;
+      background: #222;
       padding: 12px 20px;
-      border: 2px solid #444;
+      border: 2px solid #777;
       border-radius: 14px;
       cursor: pointer;
       transition: 0.2s;
-      box-shadow: 0 0 8px #111 inset;
+      box-shadow: 0 0 8px #777 inset;
       font-weight: bold;
-      color: #fff;
     }
 
     .boost:hover {
-      border-color: #00ffc3;
-      box-shadow: 0 0 15px #00ffc3 inset;
+      border-color: #fff;
+      box-shadow: 0 0 15px #fff inset;
     }
 
     .save-button {
       margin-top: 25px;
       padding: 14px 28px;
-      background: #00ffc3;
+      background: #03dac5;
       color: #000;
       border: none;
       border-radius: 12px;
@@ -103,7 +105,7 @@
       font-weight: bold;
       cursor: pointer;
       transition: background 0.3s, box-shadow 0.3s;
-      box-shadow: 0 0 12px #00ffc3;
+      box-shadow: 0 0 12px #03dac5;
     }
 
     .save-button:hover {
@@ -127,19 +129,6 @@
 
   <script>
     const tg = window.Telegram.WebApp;
-    tg.sendData("get_progress");
-
-Telegram.WebApp.onEvent("message", function(event) {
-  try {
-    const progress = JSON.parse(event.data);
-    mana = progress.mana || 0;
-    taps = progress.taps || 0;
-    updateUI();
-  } catch (e) {
-    console.warn("Не удалось загрузить прогресс", e);
-  }
-});
-
     tg.expand();
 
     let mana = 0;
@@ -148,11 +137,19 @@ Telegram.WebApp.onEvent("message", function(event) {
     const levelFill = document.getElementById("level-fill");
     const tapBtn = document.getElementById("tap-btn");
 
-    if (localStorage.getItem("mana")) {
-      mana = parseInt(localStorage.getItem("mana"), 10);
-      taps = parseInt(localStorage.getItem("taps"), 10);
-    }
-    updateUI();
+    // 🔄 Запрашиваем прогресс у бота
+    tg.sendData("get_progress");
+
+    Telegram.WebApp.onEvent("message", function(event) {
+      try {
+        const progress = JSON.parse(event.data);
+        mana = progress.mana || 0;
+        taps = progress.taps || 0;
+        updateUI();
+      } catch (e) {
+        console.warn("Не удалось загрузить прогресс", e);
+      }
+    });
 
     tapBtn.addEventListener("click", () => {
       mana++;
