@@ -2,168 +2,96 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>МАНА Бот - Крутой интерфейс</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>МАНА Бот</title>
+  <script src="https://telegram.org/js/telegram-web-app.js?v=2"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
     body {
       margin: 0;
-      font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(135deg, #6b00b6, #440074);
-      color: #f0f0f0;
+      font-family: sans-serif;
+      background: #121212;
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding: 30px 20px;
-      user-select: none;
+      justify-content: start;
+      height: 100vh;
+      padding: 20px;
     }
-
     .mana {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 15px;
-      letter-spacing: 2px;
-      text-shadow: 0 0 8px #b285ff;
+      font-size: 24px;
+      margin-bottom: 10px;
     }
-
     .level-bar {
-      width: 90%;
-      max-width: 400px;
-      height: 24px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 15px;
+      width: 80%;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: inset 0 0 8px #7f00ff88;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
-
     .level-fill {
       height: 100%;
-      background: #b285ff;
+      background: #4caf50;
       width: 0%;
-      border-radius: 15px 0 0 15px;
       transition: width 0.3s ease;
-      box-shadow: 0 0 12px #b285ffaa;
     }
-
-    #tap-btn {
-      width: 160px;
-      height: 160px;
-      background: #a64fff;
+    .tap-button {
+      width: 150px;
+      height: 150px;
+      background: #6200ea;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
-      font-weight: 700;
+      font-size: 24px;
       cursor: pointer;
-      box-shadow: 0 6px 15px #b285ffcc;
-      transition: transform 0.12s ease, box-shadow 0.3s ease;
       user-select: none;
-      margin-bottom: 40px;
+      transition: transform 0.1s ease;
+      box-shadow: 0 0 15px #6200ea;
     }
-    #tap-btn:hover {
-      box-shadow: 0 8px 24px #d2aaffee;
-      background: #c089ff;
+    .tap-button:active {
+      transform: scale(0.95);
     }
-    #tap-btn:active {
-      transform: scale(0.92);
-      box-shadow: 0 3px 8px #9955ffcc;
-      background: #7d33ff;
-    }
-
     .boosts {
+      margin-top: 30px;
       display: flex;
-      gap: 20px;
+      gap: 15px;
       flex-wrap: wrap;
       justify-content: center;
-      max-width: 480px;
-      margin-bottom: 40px;
     }
-
     .boost {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 16px 28px;
-      border-radius: 14px;
-      border: 2px solid transparent;
-      font-weight: 600;
-      font-size: 16px;
-      color: #dfc3ff;
+      background: #1e1e1e;
+      padding: 10px 20px;
+      border: 2px solid #555;
+      border-radius: 12px;
       cursor: pointer;
-      text-align: center;
-      width: 130px;
-      box-shadow: 0 0 12px transparent;
-      transition: all 0.25s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      user-select: none;
+      transition: 0.2s;
+      box-shadow: 0 0 8px #555 inset;
     }
     .boost:hover {
-      border-color: #c1a8ff;
-      box-shadow: 0 0 15px #d1a6ffaa;
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
+      border-color: #fff;
+      box-shadow: 0 0 15px #fff inset;
     }
-    .boost.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      box-shadow: none;
-      border-color: transparent;
-      color: #888;
-    }
-
-    .boost-icon {
-      font-size: 28px;
-      line-height: 1;
-    }
-
     .save-button {
-      padding: 14px 36px;
-      background: #7d33ff;
-      color: #fff;
-      font-weight: 700;
-      font-size: 18px;
+      margin-top: 25px;
+      padding: 12px 24px;
+      background: #03dac5;
+      color: black;
       border: none;
-      border-radius: 18px;
+      border-radius: 10px;
+      font-size: 16px;
       cursor: pointer;
-      box-shadow: 0 0 15px #9955ffcc;
-      user-select: none;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
+      font-weight: bold;
+      transition: background 0.3s;
+      box-shadow: 0 0 12px #03dac5;
     }
     .save-button:hover {
-      background: #b285ff;
-      box-shadow: 0 0 25px #d2aaffee;
-    }
-    .save-button:active {
-      background: #5a00cc;
-      box-shadow: 0 0 8px #7d33ffcc;
-    }
-
-    .alert {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #5a00cc;
-      padding: 12px 25px;
-      border-radius: 20px;
-      font-weight: 700;
-      color: white;
-      box-shadow: 0 0 10px #b285ffbb;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
-      z-index: 10;
-    }
-    .alert.show {
-      opacity: 1;
-      pointer-events: auto;
+      background: #00bfa5;
+      box-shadow: 0 0 20px #00bfa5;
     }
   </style>
 </head>
@@ -172,156 +100,61 @@
   <div class="level-bar">
     <div class="level-fill" id="level-fill"></div>
   </div>
-
-  <div id="tap-btn" title="Нажми, чтобы получить ману!">ТАП!</div>
-
+  <div class="tap-button" id="tap-btn">ТАП!</div>
   <div class="boosts">
-    <div class="boost" id="boost-x2" data-cost="100" title="Удваивает ману за тап">
-      <div class="boost-icon">⚡️</div>
-      +2x Мана<br><small>(100 маны)</small>
-    </div>
-    <div class="boost" id="boost-auto" data-cost="250" title="Автоматический сбор маны">
-      <div class="boost-icon">🤖</div>
-      АвтоТАП<br><small>(250 маны)</small>
-    </div>
-    <div class="boost" id="boost-crit" data-cost="500" title="Шанс критического удара">
-      <div class="boost-icon">🎯</div>
-      Крит.Удар<br><small>(500 маны)</small>
-    </div>
+    <div class="boost" onclick="buyBoost(100)">+2x Мана (100)</div>
+    <div class="boost" onclick="buyBoost(250)">+АвтоТАП (250)</div>
+    <div class="boost" onclick="buyBoost(500)">+Крит.Удар (500)</div>
   </div>
-
-  <button class="save-button" id="save-btn">💾 Сохранить результат</button>
-
-  <div class="alert" id="alert-msg"></div>
+  <button class="save-button" onclick="sendDataToBot()">💾 Сохранить результат</button>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Начальные значения
     let mana = 0;
     let taps = 0;
-    let manaMultiplier = 1;
-    let autoTapEnabled = false;
-    let critChance = 0;
-
-    // Элементы
     const manaCount = document.getElementById("mana-count");
     const levelFill = document.getElementById("level-fill");
     const tapBtn = document.getElementById("tap-btn");
-    const alertMsg = document.getElementById("alert-msg");
 
-    // Загрузка прогресса из localStorage
+    // Загружаем прогресс из localStorage
     if (localStorage.getItem("mana")) {
-      mana = parseInt(localStorage.getItem("mana"));
-      taps = parseInt(localStorage.getItem("taps"));
-      manaMultiplier = parseInt(localStorage.getItem("manaMultiplier")) || 1;
-      autoTapEnabled = localStorage.getItem("autoTapEnabled") === "true";
-      critChance = parseFloat(localStorage.getItem("critChance")) || 0;
+      mana = parseInt(localStorage.getItem("mana"), 10);
+      taps = parseInt(localStorage.getItem("taps"), 10);
     }
     updateUI();
 
-    // Функция показа алерта
-    function showAlert(text) {
-      alertMsg.textContent = text;
-      alertMsg.classList.add("show");
-      setTimeout(() => alertMsg.classList.remove("show"), 2000);
-    }
+    tapBtn.addEventListener("click", () => {
+      mana++;
+      taps++;
+      updateUI();
+    });
 
-    // Обновление интерфейса
     function updateUI() {
       manaCount.textContent = mana;
       let levelProgress = (taps % 3000) / 30;
       levelFill.style.width = `${levelProgress}%`;
 
-      // Сохраняем прогресс
+      // Сохраняем в localStorage
       localStorage.setItem("mana", mana);
       localStorage.setItem("taps", taps);
-      localStorage.setItem("manaMultiplier", manaMultiplier);
-      localStorage.setItem("autoTapEnabled", autoTapEnabled);
-      localStorage.setItem("critChance", critChance);
-
-      // Блокируем кнопки, если маны мало
-      document.querySelectorAll('.boost').forEach(btn => {
-        const cost = parseInt(btn.dataset.cost);
-        if (mana < cost) {
-          btn.classList.add('disabled');
-        } else {
-          btn.classList.remove('disabled');
-        }
-      });
     }
 
-    // Тап — добавляем ману с учётом множителя и критического удара
-    tapBtn.addEventListener("click", () => {
-      let gainedMana = manaMultiplier;
-
-      // Критический удар с шансом critChance
-      if (Math.random() < critChance) {
-        gainedMana *= 3;
-        showAlert("Критический удар! x3 Мана!");
-      }
-
-      mana += gainedMana;
-      taps++;
-      updateUI();
-
-      // Анимация кнопки тап
-      tapBtn.style.transform = "scale(0.9)";
-      setTimeout(() => (tapBtn.style.transform = "scale(1)"), 100);
-    });
-
-    // Бусты
-    document.getElementById("boost-x2").addEventListener("click", () => buyBoost("manaMultiplier", 2, 100));
-    document.getElementById("boost-auto").addEventListener("click", () => buyBoost("autoTapEnabled", true, 250));
-    document.getElementById("boost-crit").addEventListener("click", () => buyBoost("critChance", 0.2, 500)); // 20% крит
-
-    function buyBoost(type, value, cost) {
-      if (mana < cost) {
-        showAlert("Недостаточно МАНЫ!");
-        return;
-      }
-      mana -= cost;
-
-      if (type === "manaMultiplier") {
-        manaMultiplier = value;
-        showAlert("Удвоение маны активировано!");
-      } else if (type === "autoTapEnabled") {
-        autoTapEnabled = value;
-        showAlert("АвтоТАП активирован!");
-        if (autoTapEnabled) startAutoTap();
-      } else if (type === "critChance") {
-        critChance = value;
-        showAlert("Критический удар активирован!");
-      }
-
-      updateUI();
-    }
-
-    // Авто тап
-    let autoTapInterval = null;
-    function startAutoTap() {
-      if (autoTapInterval) return;
-      autoTapInterval = setInterval(() => {
-        let gainedMana = manaMultiplier;
-        // Критический удар с шансом critChance
-        if (Math.random() < critChance) {
-          gainedMana *= 3;
-          showAlert("Критический удар! x3 Мана!");
-        }
-        mana += gainedMana;
-        taps++;
+    function buyBoost(cost) {
+      if (mana >= cost) {
+        mana -= cost;
+        alert("Буст куплен! (пока просто алерт)");
         updateUI();
-      }, 2000);
+      } else {
+        alert("Недостаточно МАНЫ!");
+      }
     }
-    if (autoTapEnabled) startAutoTap();
 
-    // Сохранение результата в бота
-    document.getElementById("save-btn").addEventListener("click", () => {
-      const data = { mana, taps, manaMultiplier, autoTapEnabled, critChance };
+    function sendDataToBot() {
+      const data = { mana, taps };
       tg.sendData(JSON.stringify(data));
-      showAlert("Результат сохранён!");
-    });
+    }
   </script>
 </body>
 </html>
