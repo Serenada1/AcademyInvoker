@@ -2,68 +2,83 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <!-- Отключение кэша -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>МАНА Бот</title>
+  <title>🌟 МАНА Бот</title>
   <script src="https://telegram.org/js/telegram-web-app.js?v=2"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom, #1e1e2f, #121212);
-      color: white;
+      background: linear-gradient(135deg, #2c003e, #001f3f, #003f5c);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: start;
       height: 100vh;
       padding: 20px;
+      overflow: hidden;
+      position: relative;
     }
+
+    @keyframes gradientShift {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
     .mana {
       font-size: 26px;
       margin-bottom: 10px;
       font-weight: bold;
-      text-shadow: 0 0 5px #4caf50;
     }
+
     .level-bar {
-      width: 90%;
-      height: 20px;
-      background: #2c2c2c;
+      width: 80%;
+      height: 22px;
+      background: #333;
       border-radius: 12px;
       overflow: hidden;
       margin-bottom: 20px;
-      box-shadow: inset 0 0 10px #000;
+      box-shadow: 0 0 10px #000;
     }
+
     .level-fill {
       height: 100%;
-      background: linear-gradient(90deg, #76ff03, #00e676);
+      background: linear-gradient(90deg, #00ffcc, #00bfff);
       width: 0%;
       transition: width 0.4s ease;
     }
+
     .tap-button {
       width: 160px;
       height: 160px;
-      background: radial-gradient(circle, #7c4dff, #651fff);
+      background: radial-gradient(circle at 30% 30%, #ff80ab, #c51162);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
+      font-size: 28px;
       font-weight: bold;
-      color: white;
+      color: #fff;
       cursor: pointer;
       user-select: none;
       transition: transform 0.1s ease;
-      box-shadow: 0 0 20px #7c4dff;
+      box-shadow: 0 0 25px #f50057, 0 0 50px #f50057 inset;
+      position: relative;
+      z-index: 1;
     }
+
     .tap-button:active {
       transform: scale(0.95);
-      box-shadow: 0 0 30px #b388ff;
+      box-shadow: 0 0 40px #ff4081;
     }
+
     .boosts {
       margin-top: 30px;
       display: flex;
@@ -71,49 +86,69 @@
       flex-wrap: wrap;
       justify-content: center;
     }
+
     .boost {
-      background: #1f1f1f;
-      padding: 12px 24px;
+      background: #1e1e1e;
+      padding: 10px 20px;
       border: 2px solid #555;
-      border-radius: 14px;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s;
+      transition: 0.2s;
       box-shadow: 0 0 8px #555 inset;
+      font-weight: bold;
     }
+
     .boost:hover {
-      border-color: #00e676;
-      box-shadow: 0 0 12px #00e676 inset;
+      border-color: #fff;
+      box-shadow: 0 0 15px #fff inset;
     }
+
     .save-button {
-      margin-top: 30px;
-      padding: 14px 28px;
+      margin-top: 25px;
+      padding: 12px 24px;
       background: #03dac5;
       color: black;
       border: none;
-      border-radius: 12px;
-      font-size: 17px;
+      border-radius: 10px;
+      font-size: 16px;
       cursor: pointer;
       font-weight: bold;
-      transition: background 0.3s, box-shadow 0.3s;
+      transition: background 0.3s;
       box-shadow: 0 0 12px #03dac5;
     }
+
     .save-button:hover {
       background: #00bfa5;
-      box-shadow: 0 0 18px #00bfa5;
+      box-shadow: 0 0 20px #00bfa5;
+    }
+
+    .flash {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: flash 0.5s ease-out forwards;
+      z-index: 0;
+    }
+
+    @keyframes flash {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(2); }
     }
   </style>
 </head>
 <body>
-  <div class="mana">МАНА: <span id="mana-count">0</span></div>
+  <div class="mana">🌟 МАНА: <span id="mana-count">0</span></div>
   <div class="level-bar">
     <div class="level-fill" id="level-fill"></div>
   </div>
   <div class="tap-button" id="tap-btn">ТАП!</div>
   <div class="boosts">
-    <div class="boost" onclick="buyBoost(100)">+2x Мана (100)</div>
-    <div class="boost" onclick="buyBoost(250)">+АвтоТАП (250)</div>
-    <div class="boost" onclick="buyBoost(500)">+Крит.Удар (500)</div>
+    <div class="boost" onclick="buyBoost(100)">✨ 2x Мана (100)</div>
+    <div class="boost" onclick="buyBoost(250)">⚙️ АвтоТАП (250)</div>
+    <div class="boost" onclick="buyBoost(500)">💥 Крит.Удар (500)</div>
   </div>
   <button class="save-button" onclick="sendDataToBot()">💾 Сохранить результат</button>
 
@@ -127,17 +162,24 @@
     const levelFill = document.getElementById("level-fill");
     const tapBtn = document.getElementById("tap-btn");
 
-    // Загружаем прогресс из localStorage
     if (localStorage.getItem("mana")) {
       mana = parseInt(localStorage.getItem("mana"), 10);
       taps = parseInt(localStorage.getItem("taps"), 10);
     }
+
     updateUI();
 
-    tapBtn.addEventListener("click", () => {
+    tapBtn.addEventListener("click", (e) => {
       mana++;
       taps++;
       updateUI();
+
+      const flash = document.createElement("div");
+      flash.className = "flash";
+      flash.style.left = `${e.clientX - 30}px`;
+      flash.style.top = `${e.clientY - 30}px`;
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 500);
     });
 
     function updateUI() {
@@ -145,7 +187,6 @@
       let levelProgress = (taps % 3000) / 30;
       levelFill.style.width = `${levelProgress}%`;
 
-      // Сохраняем в localStorage
       localStorage.setItem("mana", mana);
       localStorage.setItem("taps", taps);
     }
@@ -153,7 +194,7 @@
     function buyBoost(cost) {
       if (mana >= cost) {
         mana -= cost;
-        alert("Буст куплен! (в будущем будет действовать)");
+        alert("Буст куплен! (пока просто эффект)");
         updateUI();
       } else {
         alert("Недостаточно МАНЫ!");
@@ -167,4 +208,3 @@
   </script>
 </body>
 </html>
-
