@@ -127,6 +127,19 @@
 
   <script>
     const tg = window.Telegram.WebApp;
+    tg.sendData("get_progress");
+
+Telegram.WebApp.onEvent("message", function(event) {
+  try {
+    const progress = JSON.parse(event.data);
+    mana = progress.mana || 0;
+    taps = progress.taps || 0;
+    updateUI();
+  } catch (e) {
+    console.warn("Не удалось загрузить прогресс", e);
+  }
+});
+
     tg.expand();
 
     let mana = 0;
