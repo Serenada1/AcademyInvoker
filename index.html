@@ -110,7 +110,15 @@
 
   <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
+
+    window.addEventListener('load', () => {
+      tg.expand();
+      // Для гарантированного обновления интерфейса:
+      if (!sessionStorage.getItem('refreshed')) {
+        sessionStorage.setItem('refreshed', 'true');
+        location.reload();
+      }
+    });
 
     let mana = 0;
     let taps = 0;
@@ -118,7 +126,6 @@
     const levelFill = document.getElementById("level-fill");
     const tapBtn = document.getElementById("tap-btn");
 
-    // Загружаем прогресс из localStorage
     if (localStorage.getItem("mana")) {
       mana = parseInt(localStorage.getItem("mana"), 10);
       taps = parseInt(localStorage.getItem("taps"), 10);
@@ -136,7 +143,6 @@
       let levelProgress = (taps % 3000) / 30;
       levelFill.style.width = `${levelProgress}%`;
 
-      // Сохраняем в localStorage
       localStorage.setItem("mana", mana);
       localStorage.setItem("taps", taps);
     }
@@ -158,3 +164,4 @@
   </script>
 </body>
 </html>
+
