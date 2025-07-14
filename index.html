@@ -109,6 +109,13 @@
     const levelFill = document.getElementById("level-fill");
     const tapBtn = document.getElementById("tap-btn");
 
+    // Загружаем прогресс из localStorage
+    if (localStorage.getItem("mana")) {
+      mana = parseInt(localStorage.getItem("mana"));
+      taps = parseInt(localStorage.getItem("taps"));
+    }
+    updateUI();
+
     tapBtn.addEventListener("click", () => {
       mana++;
       taps++;
@@ -119,6 +126,10 @@
       manaCount.textContent = mana;
       let levelProgress = (taps % 3000) / 30;
       levelFill.style.width = `${levelProgress}%`;
+
+      // Сохраняем в localStorage
+      localStorage.setItem("mana", mana);
+      localStorage.setItem("taps", taps);
     }
 
     function buyBoost(cost) {
@@ -138,4 +149,3 @@
   </script>
 </body>
 </html>
-
