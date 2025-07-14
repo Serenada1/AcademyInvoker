@@ -173,8 +173,6 @@
       tg.sendData(JSON.stringify(data));
     }
 
-    // Запрашиваем прогресс при загрузке WebApp
-    tg.sendData("get_progress");
 
     // Обработка сообщения от бота с прогрессом
     tg.onEvent("message", (data) => {
