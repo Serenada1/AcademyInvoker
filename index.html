@@ -1,158 +1,422 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>МАНА Бот</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at center, #0c0c1c, #02030a);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .top-stats {
-      width: 100%;
-      padding: 12px;
-      display: flex;
-      justify-content: space-around;
-      background: #1f1f2f;
-      color: #fff;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .stat-box {
-      background: linear-gradient(145deg, #292940, #3a3a5a);
-      border-radius: 10px;
-      padding: 10px 14px;
-      box-shadow: inset 0 0 5px rgba(255,255,255,0.2);
-    }
-
-    .progress-container {
-      width: 90%;
-      margin: 10px 0;
-    }
-
-    .level-info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      margin-bottom: 4px;
-      color: #aaa;
-    }
-
-    .level-bar {
-      background: #2a2a3a;
-      height: 8px;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-
-    .level-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #00bcd4, #2196f3);
-      width: 40%;
-    }
-
-    .center-sphere {
-      margin-top: 10px;
-      width: 160px;
-      height: 160px;
-      background-image: url('https://i.imgur.com/BfQLKMG.png');
-      background-size: cover;
-      background-position: center;
-      border-radius: 50%;
-      box-shadow: 0 0 20px #ff5722, inset 0 0 10px #ff9800;
-      animation: pulse 1.5s infinite;
-      cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-
-    .center-sphere:active {
-      transform: scale(0.95);
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 15px #ff5722, inset 0 0 8px #ff9800; }
-      50% { box-shadow: 0 0 30px #ff5722, inset 0 0 12px #ffc107; }
-      100% { box-shadow: 0 0 15px #ff5722, inset 0 0 8px #ff9800; }
-    }
-
-    .energy-counter {
-      margin-top: 15px;
-      font-size: 18px;
-      color: #f44336;
-    }
-
-    .bottom-nav {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      background: #121222;
-      padding: 10px 0;
-      border-top: 1px solid #2c2c3c;
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 10px;
-      color: #ccc;
-    }
-
-    .nav-item img {
-      width: 20px;
-      height: 20px;
-      margin-bottom: 4px;
-    }
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dota 2 Mana Clicker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .exort-sphere {
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .exort-sphere:active {
+            transform: scale(0.95) translateY(0px);
+            animation: none;
+        }
+        .click-effect {
+            position: absolute;
+            background-color: rgba(255, 165, 0, 0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            animation: pulse 0.5s ease-out forwards;
+        }
+        .skin-card {
+            transition: all 0.3s;
+        }
+        .skin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+    </style>
 </head>
-<body>
-  <div class="top-stats">
-    <div class="stat-box">ENERGY<br>4000 LVL 4</div>
-    <div class="stat-box">MULTITAP<br>4000 LVL 4</div>
-  </div>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex items-center">
+                <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/global/dota2_logo_symbol.png" alt="Dota 2 Logo" class="h-12 mr-3">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-orange-500 to-yellow-400 bg-clip-text text-transparent">Dota 2 Mana Clicker</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-fire text-yellow-500 mr-2"></i>
+                    <span id="mana-counter" class="font-bold text-xl">0</span>
+                    <span class="ml-1 text-yellow-400">маны</span>
+                </div>
+                <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-trophy text-yellow-300 mr-2"></i>
+                    <span id="total-clicks" class="font-bold">0</span>
+                </div>
+            </div>
+        </header>
 
-  <div class="progress-container">
-    <div class="level-info">
-      <span>LVL 5</span>
-      <span>LVL 6</span>
+        <!-- Main Game Area -->
+        <main class="flex flex-col lg:flex-row gap-8">
+            <!-- Clicker Section -->
+            <section class="flex-1 flex flex-col items-center justify-center">
+                <div class="relative mb-8">
+                    <div id="exort-container" class="relative">
+                        <img id="exort-sphere" src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_exort.png" alt="Exort Sphere" class="exort-sphere h-48 w-48 md:h-64 md:w-64">
+                    </div>
+                    <div class="mt-4 text-center">
+                        <p class="text-gray-300 mb-2">Кликай по сфере, чтобы собирать ману</p>
+                        <div class="bg-gray-800 rounded-full h-4 w-full max-w-xs mx-auto">
+                            <div id="mana-progress" class="progress-bar bg-yellow-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                        <div class="text-yellow-400 mb-1"><i class="fas fa-bolt"></i> Кликов</div>
+                        <div id="click-count" class="text-2xl font-bold">0</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                        <div class="text-yellow-400 mb-1"><i class="fas fa-coins"></i> Маны/клик</div>
+                        <div id="mana-per-click" class="text-2xl font-bold">1</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                        <div class="text-yellow-400 mb-1"><i class="fas fa-level-up-alt"></i> Уровень</div>
+                        <div id="player-level" class="text-2xl font-bold">1</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                        <div class="text-yellow-400 mb-1"><i class="fas fa-magic"></i> Множитель</div>
+                        <div id="mana-multiplier" class="text-2xl font-bold">1x</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Shop Section -->
+            <section class="flex-1 bg-gray-800 rounded-xl p-6">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-shopping-cart text-yellow-500 mr-3"></i>
+                    Магазин скинов
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Skin 1 -->
+                    <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-700">
+                        <div class="relative">
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/blade_of_ali.png" alt="Blade of Ali" class="w-full h-32 object-contain bg-gray-900">
+                            <div class="absolute top-2 right-2 bg-yellow-600 text-xs px-2 py-1 rounded">Legendary</div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">Blade of Ali</h3>
+                            <p class="text-gray-300 text-sm mb-3">Для Juggernaut</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-400 font-bold">500 маны</span>
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" data-cost="500" data-skin="Blade of Ali">
+                                    Купить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Skin 2 -->
+                    <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-blue-700">
+                        <div class="relative">
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/octarine_core.png" alt="Octarine Core" class="w-full h-32 object-contain bg-gray-900">
+                            <div class="absolute top-2 right-2 bg-blue-600 text-xs px-2 py-1 rounded">Immortal</div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">Octarine Core</h3>
+                            <p class="text-gray-300 text-sm mb-3">Для всех героев</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-400 font-bold">1200 маны</span>
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" data-cost="1200" data-skin="Octarine Core">
+                                    Купить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Skin 3 -->
+                    <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-purple-700">
+                        <div class="relative">
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/arcana.png" alt="Arcana" class="w-full h-32 object-contain bg-gray-900">
+                            <div class="absolute top-2 right-2 bg-purple-600 text-xs px-2 py-1 rounded">Arcana</div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">Terrorblade Arcana</h3>
+                            <p class="text-gray-300 text-sm mb-3">Для Terrorblade</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-400 font-bold">5000 маны</span>
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" data-cost="5000" data-skin="Terrorblade Arcana">
+                                    Купить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Skin 4 -->
+                    <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-red-700">
+                        <div class="relative">
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/dragonclaw_hook.png" alt="Dragonclaw Hook" class="w-full h-32 object-contain bg-gray-900">
+                            <div class="absolute top-2 right-2 bg-red-600 text-xs px-2 py-1 rounded">Ultra Rare</div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">Dragonclaw Hook</h3>
+                            <p class="text-gray-300 text-sm mb-3">Для Pudge</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-400 font-bold">3000 маны</span>
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" data-cost="3000" data-skin="Dragonclaw Hook">
+                                    Купить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Inventory Section -->
+        <section class="mt-12 bg-gray-800 rounded-xl p-6">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-backpack text-yellow-500 mr-3"></i>
+                Ваши скины
+            </h2>
+            <div id="inventory" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-box-open text-4xl mb-2"></i>
+                    <p>Здесь будут ваши купленные скины</p>
+                </div>
+            </div>
+        </section>
     </div>
-    <div class="level-bar">
-      <div class="level-fill"></div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgrade-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-yellow-400">Уровень повышен!</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div class="text-center mb-4">
+                <i class="fas fa-level-up-alt text-4xl text-yellow-500 mb-3"></i>
+                <p>Теперь вы получаете <span id="new-multiplier" class="text-yellow-400 font-bold">2x</span> больше маны за клик!</p>
+            </div>
+            <button id="modal-ok" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded">
+                Отлично!
+            </button>
+        </div>
     </div>
-  </div>
 
-  <div class="center-sphere" onclick="tap()"></div>
-  <div class="energy-counter" id="energy-display">3336.00</div>
+    <script>
+        // Game State
+        let state = {
+            mana: 0,
+            totalMana: 0,
+            clicks: 0,
+            manaPerClick: 1,
+            multiplier: 1,
+            level: 1,
+            inventory: [],
+            nextLevel: 100
+        };
 
-  <div class="bottom-nav">
-    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/892/892458.png" /><div>Габен</div></div>
-    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/471/471664.png" /><div>Кейсы</div></div>
-    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" /><div>Магазин</div></div>
-    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" /><div>Друзья</div></div>
-    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/1827/1827534.png" /><div>Задания</div></div>
-    <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/2883/2883848.png" /><div>Инвентарь</div></div>
-  </div>
+        // DOM Elements
+        const manaCounter = document.getElementById('mana-counter');
+        const totalClicks = document.getElementById('total-clicks');
+        const clickCount = document.getElementById('click-count');
+        const manaPerClick = document.getElementById('mana-per-click');
+        const playerLevel = document.getElementById('player-level');
+        const manaMultiplier = document.getElementById('mana-multiplier');
+        const manaProgress = document.getElementById('mana-progress');
+        const exortSphere = document.getElementById('exort-sphere');
+        const exortContainer = document.getElementById('exort-container');
+        const inventory = document.getElementById('inventory');
+        const upgradeModal = document.getElementById('upgrade-modal');
+        const newMultiplier = document.getElementById('new-multiplier');
+        const modalOk = document.getElementById('modal-ok');
+        const closeModal = document.getElementById('close-modal');
+        const buyButtons = document.querySelectorAll('.buy-btn');
 
-  <script>
-    let energy = 3336;
-    function tap() {
-      energy += 1;
-      document.getElementById("energy-display").textContent = energy.toFixed(2);
-    }
-  </script>
+        // Load saved game
+        function loadGame() {
+            const savedGame = localStorage.getItem('dotaManaClicker');
+            if (savedGame) {
+                state = JSON.parse(savedGame);
+                updateUI();
+            }
+        }
+
+        // Save game state
+        function saveGame() {
+            localStorage.setItem('dotaManaClicker', JSON.stringify(state));
+        }
+
+        // Update all UI elements
+        function updateUI() {
+            manaCounter.textContent = state.mana.toLocaleString();
+            totalClicks.textContent = state.clicks.toLocaleString();
+            clickCount.textContent = state.clicks.toLocaleString();
+            manaPerClick.textContent = state.manaPerClick;
+            playerLevel.textContent = state.level;
+            manaMultiplier.textContent = `${state.multiplier}x`;
+            
+            // Update progress bar
+            const progressPercent = Math.min(100, (state.totalMana / state.nextLevel) * 100);
+            manaProgress.style.width = `${progressPercent}%`;
+            
+            // Update inventory
+            renderInventory();
+        }
+
+        // Render inventory items
+        function renderInventory() {
+            if (state.inventory.length === 0) {
+                inventory.innerHTML = `
+                    <div class="text-center py-8 text-gray-500 col-span-full">
+                        <i class="fas fa-box-open text-4xl mb-2"></i>
+                        <p>Здесь будут ваши купленные скины</p>
+                    </div>
+                `;
+            } else {
+                inventory.innerHTML = state.inventory.map(skin => `
+                    <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-600">
+                        <div class="relative">
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/${skin.toLowerCase().replace(/ /g, '_')}.png" 
+                                 alt="${skin}" 
+                                 class="w-full h-32 object-contain bg-gray-900">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">${skin}</h3>
+                            <p class="text-gray-300 text-sm">Приобретено</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Handle click on Exort sphere
+        function handleClick(e) {
+            // Get click position
+            const rect = exortSphere.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Create click effect
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.style.left = `${x}px`;
+            effect.style.top = `${y}px`;
+            effect.style.width = '30px';
+            effect.style.height = '30px';
+            exortContainer.appendChild(effect);
+            
+            // Remove effect after animation
+            setTimeout(() => {
+                effect.remove();
+            }, 500);
+            
+            // Update game state
+            state.clicks++;
+            const manaGained = state.manaPerClick * state.multiplier;
+            state.mana += manaGained;
+            state.totalMana += manaGained;
+            
+            // Check for level up
+            if (state.totalMana >= state.nextLevel) {
+                levelUp();
+            }
+            
+            // Animate sphere
+            exortSphere.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                exortSphere.style.transform = '';
+            }, 100);
+            
+            // Update UI and save
+            updateUI();
+            saveGame();
+        }
+
+        // Level up the player
+        function levelUp() {
+            state.level++;
+            state.multiplier = Math.floor(state.level / 5) + 1;
+            state.nextLevel = state.level * 100 + Math.pow(state.level, 2) * 10;
+            
+            // Show upgrade modal
+            newMultiplier.textContent = `${state.multiplier}x`;
+            upgradeModal.classList.remove('hidden');
+        }
+
+        // Buy a skin
+        function buySkin(e) {
+            const button = e.target;
+            const cost = parseInt(button.getAttribute('data-cost'));
+            const skin = button.getAttribute('data-skin');
+            
+            if (state.mana >= cost) {
+                state.mana -= cost;
+                state.inventory.push(skin);
+                updateUI();
+                saveGame();
+                
+                // Show purchase effect
+                button.textContent = 'Куплено!';
+                button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                button.classList.add('bg-green-600', 'cursor-default');
+                button.disabled = true;
+                
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-check"></i> В инвентаре';
+                }, 500);
+            } else {
+                // Not enough mana
+                button.textContent = 'Не хватает маны!';
+                button.classList.remove('bg-yellow-600');
+                button.classList.add('bg-red-600');
+                
+                setTimeout(() => {
+                    button.textContent = 'Купить';
+                    button.classList.remove('bg-red-600');
+                    button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                }, 1000);
+            }
+        }
+
+        // Event Listeners
+        exortSphere.addEventListener('click', handleClick);
+        modalOk.addEventListener('click', () => upgradeModal.classList.add('hidden'));
+        closeModal.addEventListener('click', () => upgradeModal.classList.add('hidden'));
+        
+        buyButtons.forEach(button => {
+            button.addEventListener('click', buySkin);
+            
+            // Disable already purchased skins
+            const skin = button.getAttribute('data-skin');
+            if (state.inventory.includes(skin)) {
+                button.innerHTML = '<i class="fas fa-check"></i> В инвентаре';
+                button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                button.classList.add('bg-green-600', 'cursor-default');
+                button.disabled = true;
+            }
+        });
+
+        // Initialize game
+        loadGame();
+
+        // Auto-save every 30 seconds
+        setInterval(saveGame, 30000);
+    </script>
 </body>
 </html>
