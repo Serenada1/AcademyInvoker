@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dota 2 Mana Clicker</title>
+    <title>Академия Инвокера</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -17,18 +17,39 @@
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         .exort-sphere {
             animation: float 3s ease-in-out infinite, glow 2s ease-in-out infinite alternate;
             cursor: pointer;
             transition: all 0.2s;
             transform-style: preserve-3d;
-            box-shadow: 0 0 30px rgba(255, 165, 0, 0.5), 
+            box-shadow: 0 0 30px rgba(255, 165, 0, 0.5),
                         inset 0 0 20px rgba(255, 255, 255, 0.2),
                         inset -10px -10px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .exort-sphere::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 55%
+            );
+            animation: rotate 10s linear infinite;
         }
         @keyframes glow {
             from { box-shadow: 0 0 20px rgba(255, 165, 0, 0.5); }
-            to { box-shadow: 0 0 40px rgba(255, 165, 0, 0.8); }
+            to { box-shadow: 0 0 40px rgba(255, 165, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.4); }
         }
         .exort-sphere:active {
             transform: scale(0.95) translateY(0px);
@@ -46,31 +67,78 @@
         }
         .skin-card {
             transition: all 0.3s;
+            position: relative;
         }
         .skin-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
+        .skin-card:hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+        }
         .progress-bar {
             transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            animation: progressShine 2s infinite;
+        }
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .invoker-bg {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+        .invoker-text {
+            background: linear-gradient(to right, #f59e0b, #f97316, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+        @keyframes shine {
+            to { background-position: 200% center; }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
+<body class="invoker-bg text-white min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <header class="flex justify-between items-center mb-8">
             <div class="flex items-center">
-                <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/global/dota2_logo_symbol.png" alt="Dota 2 Logo" class="h-12 mr-3">
-                <h1 class="text-3xl font-bold bg-gradient-to-r from-orange-500 to-yellow-400 bg-clip-text text-transparent">Dota 2 Mana Clicker</h1>
+                <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/icons/invoker.png" 
+                     alt="Invoker Icon" 
+                     class="h-12 mr-3 animate-pulse">
+                <h1 class="text-3xl font-bold invoker-text">Академия Инвокера</h1>
             </div>
             <div class="flex items-center space-x-4">
-                <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center">
+                <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center border border-yellow-600/50">
                     <i class="fas fa-fire text-yellow-500 mr-2"></i>
                     <span id="mana-counter" class="font-bold text-xl">0</span>
                     <span class="ml-1 text-yellow-400">маны</span>
                 </div>
-                <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center">
+                <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center border border-yellow-600/50">
                     <i class="fas fa-trophy text-yellow-300 mr-2"></i>
                     <span id="total-clicks" class="font-bold">0</span>
                 </div>
@@ -86,27 +154,27 @@
                         <div id="exort-sphere" class="exort-sphere h-48 w-48 md:h-64 md:w-64 rounded-full bg-gradient-to-br from-orange-500 to-yellow-400 shadow-lg shadow-orange-500/50"></div>
                     </div>
                     <div class="mt-4 text-center">
-                        <p class="text-gray-300 mb-2">Кликай по сфере, чтобы собирать ману</p>
-                        <div class="bg-gray-800 rounded-full h-4 w-full max-w-xs mx-auto">
+                        <p class="text-gray-300 mb-2">Соберите сферу Экзорта для накопления маны</p>
+                        <div class="bg-gray-800 rounded-full h-4 w-full max-w-xs mx-auto border border-gray-700">
                             <div id="mana-progress" class="progress-bar bg-yellow-500 h-full rounded-full" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
                         <div class="text-yellow-400 mb-1"><i class="fas fa-bolt"></i> Кликов</div>
                         <div id="click-count" class="text-2xl font-bold">0</div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
                         <div class="text-yellow-400 mb-1"><i class="fas fa-coins"></i> Маны/клик</div>
                         <div id="mana-per-click" class="text-2xl font-bold">1</div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
                         <div class="text-yellow-400 mb-1"><i class="fas fa-level-up-alt"></i> Уровень</div>
                         <div id="player-level" class="text-2xl font-bold">1</div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
                         <div class="text-yellow-400 mb-1"><i class="fas fa-magic"></i> Множитель</div>
                         <div id="mana-multiplier" class="text-2xl font-bold">1x</div>
                     </div>
@@ -114,80 +182,96 @@
             </section>
 
             <!-- Shop Section -->
-            <section class="flex-1 bg-gray-800 rounded-xl p-6">
-                <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <section class="flex-1 bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h2 class="text-2xl font-bold mb-6 flex items-center invoker-text">
                     <i class="fas fa-shopping-cart text-yellow-500 mr-3"></i>
-                    Магазин скинов
+                    Магазин заклинаний
                 </h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Skin 1 -->
+                    <!-- Spell 1 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-700">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/blade_of_ali.png" alt="Blade of Ali" class="w-full h-32 object-contain bg-gray-900">
-                            <div class="absolute top-2 right-2 bg-yellow-600 text-xs px-2 py-1 rounded">Legendary</div>
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_sun_strike.png" 
+                                 alt="Sun Strike" 
+                                 class="w-full h-32 object-contain bg-gray-900 p-4">
+                            <div class="absolute top-2 right-2 bg-yellow-600 text-xs px-2 py-1 rounded">QQQ</div>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Blade of Ali</h3>
-                            <p class="text-gray-300 text-sm mb-3">Для Juggernaut</p>
+                            <h3 class="font-bold text-lg mb-1">Солнечный Удар</h3>
+                            <p class="text-gray-300 text-sm mb-3">Мгновенный удар с небес</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">500 маны</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" data-cost="500" data-skin="Blade of Ali">
-                                    Купить
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" 
+                                        data-cost="500" 
+                                        data-skin="Sun Strike">
+                                    Изучить
                                 </button>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Skin 2 -->
+
+                    <!-- Spell 2 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-blue-700">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/octarine_core.png" alt="Octarine Core" class="w-full h-32 object-contain bg-gray-900">
-                            <div class="absolute top-2 right-2 bg-blue-600 text-xs px-2 py-1 rounded">Immortal</div>
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_chaos_meteor.png" 
+                                 alt="Chaos Meteor" 
+                                 class="w-full h-32 object-contain bg-gray-900 p-4">
+                            <div class="absolute top-2 right-2 bg-blue-600 text-xs px-2 py-1 rounded">WWE</div>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Octarine Core</h3>
-                            <p class="text-gray-300 text-sm mb-3">Для всех героев</p>
+                            <h3 class="font-bold text-lg mb-1">Хаотический Метеор</h3>
+                            <p class="text-gray-300 text-sm mb-3">Огненный метеор</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">1200 маны</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" data-cost="1200" data-skin="Octarine Core">
-                                    Купить
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" 
+                                        data-cost="1200" 
+                                        data-skin="Chaos Meteor">
+                                    Изучить
                                 </button>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Skin 3 -->
+
+                    <!-- Spell 3 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-purple-700">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/arcana.png" alt="Arcana" class="w-full h-32 object-contain bg-gray-900">
-                            <div class="absolute top-2 right-2 bg-purple-600 text-xs px-2 py-1 rounded">Arcana</div>
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_deafening_blast.png" 
+                                 alt="Deafening Blast" 
+                                 class="w-full h-32 object-contain bg-gray-900 p-4">
+                            <div class="absolute top-2 right-2 bg-purple-600 text-xs px-2 py-1 rounded">QWE</div>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Terrorblade Arcana</h3>
-                            <p class="text-gray-300 text-sm mb-3">Для Terrorblade</p>
+                            <h3 class="font-bold text-lg mb-1">Оглушительный Взрыв</h3>
+                            <p class="text-gray-300 text-sm mb-3">Мощная звуковая волна</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">5000 маны</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" data-cost="5000" data-skin="Terrorblade Arcana">
-                                    Купить
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" 
+                                        data-cost="5000" 
+                                        data-skin="Deafening Blast">
+                                    Изучить
                                 </button>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Skin 4 -->
+
+                    <!-- Spell 4 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-red-700">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/dragonclaw_hook.png" alt="Dragonclaw Hook" class="w-full h-32 object-contain bg-gray-900">
-                            <div class="absolute top-2 right-2 bg-red-600 text-xs px-2 py-1 rounded">Ultra Rare</div>
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_emp.png" 
+                                 alt="EMP" 
+                                 class="w-full h-32 object-contain bg-gray-900 p-4">
+                            <div class="absolute top-2 right-2 bg-red-600 text-xs px-2 py-1 rounded">WWW</div>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Dragonclaw Hook</h3>
-                            <p class="text-gray-300 text-sm mb-3">Для Pudge</p>
+                            <h3 class="font-bold text-lg mb-1">Электромагнитный Импульс</h3>
+                            <p class="text-gray-300 text-sm mb-3">Сжигает ману врагов</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">3000 маны</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" data-cost="3000" data-skin="Dragonclaw Hook">
-                                    Купить
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" 
+                                        data-cost="3000" 
+                                        data-skin="EMP">
+                                    Изучить
                                 </button>
                             </div>
                         </div>
@@ -197,15 +281,15 @@
         </main>
 
         <!-- Inventory Section -->
-        <section class="mt-12 bg-gray-800 rounded-xl p-6">
-            <h2 class="text-2xl font-bold mb-6 flex items-center">
-                <i class="fas fa-backpack text-yellow-500 mr-3"></i>
-                Ваши скины
+        <section class="mt-12 bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h2 class="text-2xl font-bold mb-6 flex items-center invoker-text">
+                <i class="fas fa-scroll text-yellow-500 mr-3"></i>
+                Ваши заклинания
             </h2>
             <div id="inventory" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <div class="text-center py-8 text-gray-500">
-                    <i class="fas fa-box-open text-4xl mb-2"></i>
-                    <p>Здесь будут ваши купленные скины</p>
+                    <i class="fas fa-book-open text-4xl mb-2"></i>
+                    <p>Здесь будут изученные заклинания</p>
                 </div>
             </div>
         </section>
@@ -213,17 +297,18 @@
 
     <!-- Upgrade Modal -->
     <div id="upgrade-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
-        <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+        <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full border border-yellow-600">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-yellow-400">Уровень повышен!</h3>
-                <button id="close-modal" class="text-gray-400 hover:text-white">&times;</button>
+                <h3 class="text-xl font-bold text-yellow-400">Уровень магии повышен!</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
             </div>
             <div class="text-center mb-4">
-                <i class="fas fa-level-up-alt text-4xl text-yellow-500 mb-3"></i>
+                <i class="fas fa-hat-wizard text-4xl text-yellow-500 mb-3 animate-bounce"></i>
                 <p>Теперь вы получаете <span id="new-multiplier" class="text-yellow-400 font-bold">2x</span> больше маны за клик!</p>
+                <p class="text-gray-300 mt-2">Продолжайте изучать новые заклинания</p>
             </div>
-            <button id="modal-ok" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded">
-                Отлично!
+            <button id="modal-ok" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded font-bold transition-all hover:scale-105">
+                Понятно!
             </button>
         </div>
     </div>
@@ -260,7 +345,7 @@
 
         // Load saved game
         function loadGame() {
-            const savedGame = localStorage.getItem('dotaManaClicker');
+            const savedGame = localStorage.getItem('invokerAcademy');
             if (savedGame) {
                 state = JSON.parse(savedGame);
                 updateUI();
@@ -269,7 +354,7 @@
 
         // Save game state
         function saveGame() {
-            localStorage.setItem('dotaManaClicker', JSON.stringify(state));
+            localStorage.setItem('invokerAcademy', JSON.stringify(state));
         }
 
         // Update all UI elements
@@ -280,11 +365,11 @@
             manaPerClick.textContent = state.manaPerClick;
             playerLevel.textContent = state.level;
             manaMultiplier.textContent = `${state.multiplier}x`;
-            
+
             // Update progress bar
             const progressPercent = Math.min(100, (state.totalMana / state.nextLevel) * 100);
             manaProgress.style.width = `${progressPercent}%`;
-            
+
             // Update inventory
             renderInventory();
         }
@@ -294,21 +379,21 @@
             if (state.inventory.length === 0) {
                 inventory.innerHTML = `
                     <div class="text-center py-8 text-gray-500 col-span-full">
-                        <i class="fas fa-box-open text-4xl mb-2"></i>
-                        <p>Здесь будут ваши купленные скины</p>
+                        <i class="fas fa-book-open text-4xl mb-2"></i>
+                        <p>Здесь будут изученные заклинания</p>
                     </div>
                 `;
             } else {
-                inventory.innerHTML = state.inventory.map(skin => `
+                inventory.innerHTML = state.inventory.map(spell => `
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-600">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/${skin.toLowerCase().replace(/ /g, '_')}.png" 
-                                 alt="${skin}" 
-                                 class="w-full h-32 object-contain bg-gray-900">
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_${spell.toLowerCase().replace(/ /g, '_')}.png" 
+                                  alt="${spell}" 
+                                  class="w-full h-32 object-contain bg-gray-900 p-4">
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">${skin}</h3>
-                            <p class="text-gray-300 text-sm">Приобретено</p>
+                            <h3 class="font-bold text-lg mb-1">${spell}</h3>
+                            <p class="text-gray-300 text-sm">Изучено</p>
                         </div>
                     </div>
                 `).join('');
@@ -321,7 +406,7 @@
             const rect = exortSphere.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
+
             // Create click effect
             const effect = document.createElement('div');
             effect.className = 'click-effect';
@@ -330,29 +415,29 @@
             effect.style.width = '30px';
             effect.style.height = '30px';
             exortContainer.appendChild(effect);
-            
+
             // Remove effect after animation
             setTimeout(() => {
                 effect.remove();
             }, 500);
-            
+
             // Update game state
             state.clicks++;
             const manaGained = state.manaPerClick * state.multiplier;
             state.mana += manaGained;
             state.totalMana += manaGained;
-            
+
             // Check for level up
             if (state.totalMana >= state.nextLevel) {
                 levelUp();
             }
-            
+
             // Animate sphere
             exortSphere.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 exortSphere.style.transform = '';
             }, 100);
-            
+
             // Update UI and save
             updateUI();
             saveGame();
@@ -363,41 +448,51 @@
             state.level++;
             state.multiplier = Math.floor(state.level / 5) + 1;
             state.nextLevel = state.level * 100 + Math.pow(state.level, 2) * 10;
-            
+
             // Show upgrade modal
             newMultiplier.textContent = `${state.multiplier}x`;
             upgradeModal.classList.remove('hidden');
+            
+            // Play level up sound
+            const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
+            audio.volume = 0.3;
+            audio.play();
         }
 
-        // Buy a skin
-        function buySkin(e) {
+        // Buy a spell
+        function buySpell(e) {
             const button = e.target;
             const cost = parseInt(button.getAttribute('data-cost'));
-            const skin = button.getAttribute('data-skin');
-            
+            const spell = button.getAttribute('data-skin');
+
             if (state.mana >= cost) {
                 state.mana -= cost;
-                state.inventory.push(skin);
+                state.inventory.push(spell);
                 updateUI();
                 saveGame();
-                
+
                 // Show purchase effect
-                button.textContent = 'Куплено!';
+                button.textContent = 'Изучено!';
                 button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
                 button.classList.add('bg-green-600', 'cursor-default');
                 button.disabled = true;
-                
+
                 setTimeout(() => {
-                    button.innerHTML = '<i class="fas fa-check"></i> В инвентаре';
+                    button.innerHTML = '<i class="fas fa-check"></i> В арсенале';
                 }, 500);
+                
+                // Play purchase sound
+                const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3');
+                audio.volume = 0.3;
+                audio.play();
             } else {
                 // Not enough mana
                 button.textContent = 'Не хватает маны!';
                 button.classList.remove('bg-yellow-600');
                 button.classList.add('bg-red-600');
-                
+
                 setTimeout(() => {
-                    button.textContent = 'Купить';
+                    button.textContent = 'Изучить';
                     button.classList.remove('bg-red-600');
                     button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
                 }, 1000);
@@ -408,14 +503,14 @@
         exortSphere.addEventListener('click', handleClick);
         modalOk.addEventListener('click', () => upgradeModal.classList.add('hidden'));
         closeModal.addEventListener('click', () => upgradeModal.classList.add('hidden'));
-        
+
         buyButtons.forEach(button => {
-            button.addEventListener('click', buySkin);
-            
-            // Disable already purchased skins
-            const skin = button.getAttribute('data-skin');
-            if (state.inventory.includes(skin)) {
-                button.innerHTML = '<i class="fas fa-check"></i> В инвентаре';
+            button.addEventListener('click', buySpell);
+
+            // Disable already purchased spells
+            const spell = button.getAttribute('data-skin');
+            if (state.inventory.includes(spell)) {
+                button.innerHTML = '<i class="fas fa-check"></i> В арсенале';
                 button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
                 button.classList.add('bg-green-600', 'cursor-default');
                 button.disabled = true;
