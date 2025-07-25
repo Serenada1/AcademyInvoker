@@ -125,14 +125,14 @@
 <body class="invoker-bg text-white min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
-        <header class="flex justify-between items-center mb-8">
+        <header class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
             <div class="flex items-center">
-                <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/icons/invoker.png" 
-                     alt="Invoker Icon" 
+                <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/icons/invoker.png"
+                     alt="Invoker Icon"
                      class="h-12 mr-3 animate-pulse">
-                <h1 class="text-3xl font-bold invoker-text">Академия Инвокера</h1>
+                <h1 class="text-3xl font-bold invoker-text whitespace-nowrap">Академия Инвокера</h1>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4 flex-wrap justify-center sm:justify-end">
                 <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center border border-yellow-600/50">
                     <i class="fas fa-fire text-yellow-500 mr-2"></i>
                     <span id="mana-counter" class="font-bold text-xl">0</span>
@@ -188,8 +188,8 @@
                     <!-- Spell 1 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-700">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_sun_strike.png" 
-                                 alt="Sun Strike" 
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_sun_strike.png"
+                                 alt="Sun Strike"
                                  class="w-full h-32 object-contain bg-gray-900 p-4">
                             <div class="absolute top-2 right-2 bg-yellow-600 text-xs px-2 py-1 rounded">QQQ</div>
                         </div>
@@ -198,8 +198,8 @@
                             <p class="text-gray-300 text-sm mb-3">Мгновенный удар с небес</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">500 маны</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" 
-                                        data-cost="500" 
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                                        data-cost="500"
                                         data-skin="Sun Strike">
                                     Изучить
                                 </button>
@@ -209,8 +209,8 @@
                     <!-- Spell 2 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-blue-700">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_chaos_meteor.png" 
-                                 alt="Chaos Meteor" 
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_chaos_meteor.png"
+                                 alt="Chaos Meteor"
                                  class="w-full h-32 object-contain bg-gray-900 p-4">
                             <div class="absolute top-2 right-2 bg-blue-600 text-xs px-2 py-1 rounded">WWE</div>
                         </div>
@@ -219,8 +219,8 @@
                             <p class="text-gray-300 text-sm mb-3">Огненный метеор</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">1200 маны</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" 
-                                        data-cost="1200" 
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                                        data-cost="1200"
                                         data-skin="Chaos Meteor">
                                     Изучить
                                 </button>
@@ -230,8 +230,8 @@
                     <!-- Spell 3 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-purple-700">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_deafening_blast.png" 
-                                 alt="Deafening Blast" 
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_deafening_blast.png"
+                                 alt="Deafening Blast"
                                  class="w-full h-32 object-contain bg-gray-900 p-4">
                             <div class="absolute top-2 right-2 bg-purple-600 text-xs px-2 py-1 rounded">QWE</div>
                         </div>
@@ -240,8 +240,8 @@
                             <p class="text-gray-300 text-sm mb-3">Мощная звуковая волна</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">5000 маны</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" 
-                                        data-cost="5000" 
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                                        data-cost="5000"
                                         data-skin="Deafening Blast">
                                     Изучить
                                 </button>
@@ -251,8 +251,8 @@
                     <!-- Spell 4 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-red-700">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_emp.png" 
-                                 alt="EMP" 
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_emp.png"
+                                 alt="EMP"
                                  class="w-full h-32 object-contain bg-gray-900 p-4">
                             <div class="absolute top-2 right-2 bg-red-600 text-xs px-2 py-1 rounded">WWW</div>
                         </div>
@@ -261,8 +261,8 @@
                             <p class="text-gray-300 text-sm mb-3">Сжигает ману врагов</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">3000 маны</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm" 
-                                        data-cost="3000" 
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                                        data-cost="3000"
                                         data-skin="EMP">
                                     Изучить
                                 </button>
@@ -370,8 +370,8 @@
                 inventory.innerHTML = state.inventory.map(spell => `
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-600">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_${spell.toLowerCase().replace(/ /g, '_')}.png" 
-                                  alt="${spell}" 
+                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_${spell.toLowerCase().replace(/ /g, '_')}.png"
+                                  alt="${spell}"
                                   class="w-full h-32 object-contain bg-gray-900 p-4">
                         </div>
                         <div class="p-4">
