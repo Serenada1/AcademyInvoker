@@ -152,10 +152,20 @@
                     <div id="exort-container" class="relative flex justify-center items-center">
                         <div id="exort-sphere" class="exort-sphere h-48 w-48 md:h-64 md:w-64 rounded-full bg-gradient-to-br from-orange-500 to-yellow-400 shadow-lg shadow-orange-500/50"></div>
                     </div>
-                    <div class="mt-4 text-center">
-                        <p class="text-gray-300 mb-2">Соберите сферу Экзорта для накопления маны</p>
-                        <div class="bg-gray-800 rounded-full h-4 w-full max-w-xs mx-auto border border-gray-700">
-                            <div id="mana-progress" class="progress-bar bg-yellow-500 h-full rounded-full" style="width: 0%"></div>
+                    <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between w-full max-w-xs mx-auto">
+                        <div class="text-gray-300 mb-2 md:mb-0 md:mr-4 flex items-center">
+                            <span class="text-yellow-400 mr-2"><i class="fas fa-level-up-alt"></i></span>
+                            <span>Уровень:</span>
+                            <span id="player-level" class="font-bold ml-1 text-lg invoker-text">1</span>
+                        </div>
+                        <div class="w-full">
+                            <div class="flex justify-between items-center mb-1">
+                                <span id="progress-label" class="text-xs text-gray-400"></span>
+                                <span id="progress-remaining" class="text-xs text-yellow-400 font-bold"></span>
+                            </div>
+                            <div class="bg-gray-800 rounded-full h-4 border border-gray-700">
+                                <div id="mana-progress" class="progress-bar bg-yellow-500 h-full rounded-full" style="width: 0%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,10 +179,6 @@
                         <div id="mana-per-click" class="text-2xl font-bold">1</div>
                     </div>
                     <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
-                        <div class="text-yellow-400 mb-1"><i class="fas fa-level-up-alt"></i> Уровень</div>
-                        <div id="player-level" class="text-2xl font-bold">1</div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
                         <div class="text-yellow-400 mb-1"><i class="fas fa-magic"></i> Множитель</div>
                         <div id="mana-multiplier" class="text-2xl font-bold">1x</div>
                     </div>
@@ -181,8 +187,8 @@
             <!-- Shop Section -->
             <section class="flex-1 bg-gray-800 rounded-xl p-6 border border-gray-700">
                 <h2 class="text-2xl font-bold mb-6 flex items-center invoker-text">
-                    <i class="fas fa-shopping-cart text-yellow-500 mr-3"></i>
-                    Магазин заклинаний
+                    <img src="images/флакон.png" alt="Флакон" class="w-7 h-7 mr-3" />
+                    Quick-бусты
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Spell 1 -->
@@ -351,9 +357,28 @@
             manaPerClick.textContent = state.manaPerClick;
             playerLevel.textContent = state.level;
             manaMultiplier.textContent = `${state.multiplier}x`;
-            // Update progress bar
-            const progressPercent = Math.min(100, (state.totalMana / state.nextLevel) * 100);
+
+            // Определяем, сколько нужно для текущего уровня
+            let need = state.level === 1 ? 1000 : 3000;
+            // Считаем, сколько кликов сделано с начала текущего уровня
+            let prev = 0;
+            if (state.level === 1) {
+                prev = 0;
+            } else if (state.level === 2) {
+                prev = 1000;
+            } else {
+                prev = 1000 + (state.level - 2) * 3000;
+            }
+            let done = state.totalMana - prev;
+            done = Math.max(0, done);
+            let left = Math.max(0, need - done);
+            const progressPercent = Math.min(100, (done / need) * 100);
             manaProgress.style.width = `${progressPercent}%`;
+
+            // Показываем только "Осталось: N"
+            document.getElementById('progress-label').textContent = '';
+            document.getElementById('progress-remaining').textContent = `Осталось: ${left}`;
+
             // Update inventory
             renderInventory();
         }
@@ -422,7 +447,12 @@
         function levelUp() {
             state.level++;
             state.multiplier = Math.floor(state.level / 5) + 1;
-            state.nextLevel = state.level * 100 + Math.pow(state.level, 2) * 10;
+            // Новая логика для повышения уровня:
+            if (state.level === 2) {
+                state.nextLevel = 1000;
+            } else {
+                state.nextLevel = state.nextLevel + 3000;
+            }
             // Show upgrade modal
             newMultiplier.textContent = `${state.multiplier}x`;
             upgradeModal.classList.remove('hidden');
