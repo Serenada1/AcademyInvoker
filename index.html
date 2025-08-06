@@ -205,8 +205,8 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">100 маны</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        data-cost="500"
-                                        data-skin="Sun Strike">
+                                        data-cost="100"
+                                        data-skin="Руна богатства">
                                     Изучить
                                 </button>
                             </div>
@@ -225,8 +225,8 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">100 маны</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        data-cost="1200"
-                                        data-skin="Damage Boost">
+                                        data-cost="100"
+                                        data-skin="Усиление урона">
                                     Изучить
                                 </button>
                             </div>
@@ -245,7 +245,7 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">100 маны</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        data-cost="5000"
+                                        data-cost="100"
                                         data-skin="Волшебство">
                                     Изучить
                                 </button>
@@ -268,8 +268,8 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-yellow-400 font-bold">100 маны</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        data-cost="3000"
-                                        data-skin="EMP">
+                                        data-cost="100"
+                                        data-skin="Ускорение">
                                     Изучить
                                 </button>
                             </div>
@@ -392,12 +392,18 @@
                     </div>
                 `;
             } else {
+                const spellImages = {
+                    'Руна богатства': './images/GOLDrune.png',
+                    'Усиление урона': './images/DDrune.png',
+                    'Волшебство': './images/MAGICrune.png',
+                    'Ускорение': './images/HASTErune.png'
+                };
                 inventory.innerHTML = state.inventory.map(spell => `
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-600">
                         <div class="relative">
-                            <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/invoker_${spell.toLowerCase().replace(/ /g, '_')}.png"
+                            <img src="${spellImages[spell] || './images/default.png'}"
                                   alt="${spell}"
-                                  class="w-full h-32 object-contain bg-gray-900 p-4">
+                                  class="w-full h-32 object-cover">
                         </div>
                         <div class="p-4">
                             <h3 class="font-bold text-lg mb-1">${spell}</h3>
