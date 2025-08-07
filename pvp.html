@@ -32,15 +32,53 @@
                 Назад
             </button>
             <h1 class="text-3xl font-bold invoker-text">PvP Арена</h1>
-            <div></div>
+            <button onclick="showTopPlayers()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                <i class="fas fa-crown mr-2"></i>
+                Топ-игроки
+            </button>
         </header>
 
         <!-- PvP Content -->
-        <main class="text-center">
-            <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 mb-8">
-                <i class="fas fa-sword text-6xl text-yellow-500 mb-4"></i>
-                <h2 class="text-2xl font-bold mb-4">Скоро здесь будут битвы!</h2>
-                <p class="text-gray-300">PvP система находится в разработке</p>
+        <main class="flex flex-col items-center justify-center min-h-96">
+            <div id="fight-button" class="">
+                <button onclick="startFight()" class="w-48 h-48 bg-red-600 hover:bg-red-700 rounded-full flex flex-col items-center justify-center text-white font-bold text-xl transition-all hover:scale-105 shadow-lg border-4 border-red-500">
+                    <i class="fas fa-fist-raised text-4xl mb-2"></i>
+                    <span>GO FIGHT</span>
+                </button>
+            </div>
+            
+            <!-- Item Crafting Section -->
+            <div id="item-crafting" class="hidden">
+                <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                    <!-- Target Item -->
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-bold mb-4 text-yellow-400">Собери предмет:</h3>
+                        <div class="bg-gray-700 rounded-lg p-4 inline-block">
+                            <img id="target-item-image" src="" alt="Target Item" class="w-20 h-20 mx-auto mb-2">
+                            <p id="target-item-name" class="text-white font-bold"></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Component Slots -->
+                    <div class="text-center mb-6">
+                        <h4 class="text-lg font-bold mb-4 text-gray-300">Компоненты:</h4>
+                        <div id="component-slots" class="flex justify-center gap-4 flex-wrap">
+                            <!-- Slots will be generated dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Available Items -->
+                    <div class="text-center mb-6">
+                        <h4 class="text-lg font-bold mb-4 text-gray-300">Выбери предметы:</h4>
+                        <div id="available-items" class="grid grid-cols-5 gap-3 max-w-md mx-auto">
+                            <!-- Items will be generated dynamically -->
+                        </div>
+                    </div>
+                    
+                    <button onclick="backToFight()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        Назад к бою
+                    </button>
+                </div>
             </div>
         </main>
     </div>
@@ -70,12 +108,221 @@
 
         function navigateTo(page) {
             if (page === 'chest') {
-                // window.location.href = 'chest.html';
                 console.log('Chest page not created yet');
             } else if (page === 'leaderboard') {
-                // window.location.href = 'leaderboard.html';
                 console.log('Leaderboard page not created yet');
             }
+        }
+
+        // All available items for selection
+        const allItems = [
+            { name: 'Crystalys', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/lesser_crit.png' },
+            { name: 'Demon Edge', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/demon_edge.png' },
+            { name: 'Ogre Axe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/ogre_axe.png' },
+            { name: 'Mithril Hammer', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/mithril_hammer.png' },
+            { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' },
+            { name: 'Talisman of Evasion', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/talisman_of_evasion.png' },
+            { name: 'Eaglesong', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/eagle.png' },
+            { name: 'Quarterstaff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/quarterstaff.png' },
+            { name: 'Hyperstone', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/hyperstone.png' },
+            { name: 'Platemail', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/platemail.png' },
+            { name: 'Chainmail', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/chainmail.png' },
+            { name: 'Vitality Booster', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/vitality_booster.png' },
+            { name: 'Point Booster', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/point_booster.png' },
+            { name: 'Energy Booster', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/energy_booster.png' },
+            { name: 'Reaver', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/reaver.png' },
+            { name: 'Mystic Staff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/mystic_staff.png' }
+        ];
+        
+        let currentTargetItem = null;
+        
+        // Dota 2 items database
+        const dotaItems = {
+            'daedalus': {
+                name: 'Daedalus',
+                image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/greater_crit.png',
+                components: [
+                    { name: 'Crystalys', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/lesser_crit.png' },
+                    { name: 'Demon Edge', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/demon_edge.png' },
+                    { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
+                ]
+            },
+            'black_king_bar': {
+                name: 'Black King Bar',
+                image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/black_king_bar.png',
+                components: [
+                    { name: 'Ogre Axe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/ogre_axe.png' },
+                    { name: 'Mithril Hammer', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/mithril_hammer.png' },
+                    { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
+                ]
+            },
+            'butterfly': {
+                name: 'Butterfly',
+                image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/butterfly.png',
+                components: [
+                    { name: 'Talisman of Evasion', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/talisman_of_evasion.png' },
+                    { name: 'Eaglesong', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/eagle.png' },
+                    { name: 'Quarterstaff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/quarterstaff.png' }
+                ]
+            },
+            'assault_cuirass': {
+                name: 'Assault Cuirass',
+                image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/assault.png',
+                components: [
+                    { name: 'Platemail', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/platemail.png' },
+                    { name: 'Hyperstone', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/hyperstone.png' },
+                    { name: 'Chainmail', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/chainmail.png' },
+                    { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
+                ]
+            },
+            'heart_of_tarrasque': {
+                name: 'Heart of Tarrasque',
+                image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/heart.png',
+                components: [
+                    { name: 'Reaver', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/reaver.png' },
+                    { name: 'Vitality Booster', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/vitality_booster.png' },
+                    { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
+                ]
+            }
+        };
+        
+        function startFight() {
+            document.getElementById('fight-button').classList.add('hidden');
+            document.getElementById('item-crafting').classList.remove('hidden');
+            
+            const itemKeys = Object.keys(dotaItems);
+            const randomItem = dotaItems[itemKeys[Math.floor(Math.random() * itemKeys.length)]];
+            currentTargetItem = randomItem;
+            
+            document.getElementById('target-item-image').src = randomItem.image;
+            document.getElementById('target-item-name').textContent = randomItem.name;
+            
+            const slotsContainer = document.getElementById('component-slots');
+            slotsContainer.innerHTML = '';
+            
+            randomItem.components.forEach((component, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'bg-gray-600 border-2 border-dashed border-gray-500 rounded-lg w-16 h-16 flex items-center justify-center slot cursor-pointer';
+                slot.innerHTML = `<i class="fas fa-question text-gray-400 text-2xl"></i>`;
+                slot.setAttribute('data-component', component.name);
+                slot.setAttribute('data-filled', 'false');
+                slot.onclick = () => {
+                    if (slot.getAttribute('data-filled') === 'true') {
+                        removeComponent(slot);
+                    }
+                };
+                slotsContainer.appendChild(slot);
+            });
+            
+            const itemsContainer = document.getElementById('available-items');
+            itemsContainer.innerHTML = '';
+            
+            const availableItems = [...randomItem.components];
+            const remainingItems = allItems.filter(item => 
+                !randomItem.components.some(comp => comp.name === item.name)
+            );
+            const shuffledRemaining = remainingItems.sort(() => Math.random() - 0.5);
+            availableItems.push(...shuffledRemaining.slice(0, 10 - availableItems.length));
+            
+            const finalItems = availableItems.sort(() => Math.random() - 0.5);
+            
+            finalItems.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'bg-gray-700 hover:bg-gray-600 rounded-lg p-2 cursor-pointer transition-colors available-item';
+                itemDiv.innerHTML = `<img src="${item.image}" alt="${item.name}" class="w-12 h-12 mx-auto">`;
+                itemDiv.setAttribute('data-item-name', item.name);
+                itemDiv.setAttribute('data-item-image', item.image);
+                itemDiv.onclick = () => selectItem(itemDiv);
+                itemsContainer.appendChild(itemDiv);
+            });
+        }
+        
+        function selectItem(itemElement) {
+            const itemName = itemElement.getAttribute('data-item-name');
+            const itemImage = itemElement.getAttribute('data-item-image');
+            
+            // Find first empty slot
+            const slots = document.querySelectorAll('.slot');
+            for (let slot of slots) {
+                if (slot.getAttribute('data-filled') === 'false') {
+                    slot.innerHTML = `<img src="${itemImage}" alt="${itemName}" class="w-12 h-12">`;
+                    slot.setAttribute('data-filled', 'true');
+                    slot.setAttribute('data-selected-item', itemName);
+                    itemElement.style.opacity = '0.5';
+                    itemElement.onclick = null;
+                    
+                    // Check if all slots are filled
+                    const filledSlots = document.querySelectorAll('.slot[data-filled="true"]');
+                    if (filledSlots.length === currentTargetItem.components.length) {
+                        checkRecipe();
+                    }
+                    break;
+                }
+            }
+        }
+        
+        function checkRecipe() {
+            const slots = document.querySelectorAll('.slot');
+            const selectedItems = Array.from(slots).map(slot => slot.getAttribute('data-selected-item'));
+            const requiredComponents = currentTargetItem.components.map(comp => comp.name);
+            
+            // Check if selected items match required components (order doesn't matter)
+            const isCorrect = selectedItems.length === requiredComponents.length && 
+                             selectedItems.every(item => requiredComponents.includes(item)) &&
+                             requiredComponents.every(comp => selectedItems.includes(comp));
+            
+            // Show result with colored borders
+            slots.forEach(slot => {
+                if (isCorrect) {
+                    slot.classList.remove('border-gray-500');
+                    slot.classList.add('border-green-500', 'border-4');
+                } else {
+                    slot.classList.remove('border-gray-500');
+                    slot.classList.add('border-red-500', 'border-4');
+                }
+            });
+            
+            // Wait 2 seconds then proceed
+            setTimeout(() => {
+                if (isCorrect) {
+                    startFight(); // Start next item
+                } else {
+                    // Remove colored borders but keep items for editing
+                    slots.forEach(slot => {
+                        slot.classList.remove('border-red-500', 'border-green-500', 'border-4');
+                        slot.classList.add('border-gray-500');
+                    });
+                }
+            }, 2000);
+        }
+        
+        function removeComponent(slot) {
+            const itemName = slot.getAttribute('data-selected-item');
+            
+            // Clear the slot
+            slot.innerHTML = `<i class="fas fa-question text-gray-400 text-2xl"></i>`;
+            slot.setAttribute('data-filled', 'false');
+            slot.setAttribute('data-selected-item', '');
+            slot.onclick = null;
+            
+            // Restore the item in available items
+            const availableItems = document.querySelectorAll('.available-item');
+            availableItems.forEach(item => {
+                if (item.getAttribute('data-item-name') === itemName) {
+                    item.style.opacity = '1';
+                    item.onclick = () => selectItem(item);
+                }
+            });
+        }
+        
+        function backToFight() {
+            document.getElementById('item-crafting').classList.add('hidden');
+            document.getElementById('fight-button').classList.remove('hidden');
+            currentTargetItem = null;
+        }
+
+        function showTopPlayers() {
+            console.log('Showing top players');
         }
     </script>
 </body>
