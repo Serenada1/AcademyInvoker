@@ -137,7 +137,7 @@
     </style>
 </head>
 <body class="invoker-bg text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-8 pb-20">
         <!-- Header -->
         <header class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
             <div class="flex items-center">
@@ -240,7 +240,7 @@
                                 Усиление урона
                                 <i class="fas fa-info-circle text-gray-400 ml-1 text-xs md:hidden cursor-pointer" onclick="toggleDescription(this)"></i>
                             </h3>
-                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Увеличивает урон на 25%</p>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Усиливает клик на 100%</p>
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
                                 <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
@@ -314,6 +314,25 @@
             </div>
         </section>
     </div>
+    
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 z-50">
+        <div class="flex justify-around items-center py-3">
+            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('pvp')">
+                <i class="fas fa-sword text-xl mb-1"></i>
+                <span class="text-xs">PvP</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('chest')">
+                <i class="fas fa-treasure-chest text-xl mb-1"></i>
+                <span class="text-xs">Сундук</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('leaderboard')">
+                <i class="fas fa-trophy text-xl mb-1"></i>
+                <span class="text-xs">Рейтинг</span>
+            </button>
+        </div>
+    </nav>
+    
     <!-- Upgrade Modal -->
     <div id="upgrade-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
         <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full border border-yellow-600">
@@ -341,7 +360,8 @@
             multiplier: 1,
             level: 1,
             inventory: [],
-            nextLevel: 100
+            nextLevel: 100,
+            cooldowns: {} // хранит время последнего использования каждого буста
         };
         // DOM Elements
         const manaCounter = document.getElementById('mana-counter');
@@ -412,13 +432,23 @@
                 state.inventory = activeSpells;
                 updateUI();
                 saveGame();
-                // Re-enable expired spell buttons
+                // Update expired spell buttons
                 buyButtons.forEach(button => {
                     const spellName = button.getAttribute('data-skin');
                     const isActive = state.inventory.some(spell => spell.name === spellName);
-                    if (!isActive) {
+                    const onCooldown = isOnCooldown(spellName);
+                    
+                    if (!isActive && onCooldown) {
+                        const timeLeft = getCooldownTimeLeft(spellName);
+                        const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                        const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                        button.innerHTML = `${hours}ч ${minutes}м`;
+                        button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
+                        button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                        button.disabled = true;
+                    } else if (!isActive && !onCooldown) {
                         button.innerHTML = 'Изучить';
-                        button.classList.remove('bg-green-600', 'cursor-default');
+                        button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
                         button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
                         button.disabled = false;
                     }
@@ -473,7 +503,14 @@
         function handleClick(e) {
             // Update game state
             state.clicks++;
-            const manaGained = state.manaPerClick * state.multiplier;
+            let manaGained = state.manaPerClick * state.multiplier;
+            
+            // Check if damage enhancement rune is active
+            const damageRune = state.inventory.find(spell => spell.name === 'Усиление урона');
+            if (damageRune) {
+                manaGained *= 2; // Double the mana gain
+            }
+            
             state.mana += manaGained;
             state.totalMana += manaGained;
             // Check for level up
@@ -537,19 +574,49 @@
             }
         }
         
+        // Check if spell is on cooldown
+        function isOnCooldown(spellName) {
+            const cooldownDuration = 12 * 60 * 60 * 1000; // 12 часов
+            const lastUsed = state.cooldowns[spellName];
+            if (!lastUsed) return false;
+            return (Date.now() - lastUsed) < cooldownDuration;
+        }
+        
+        // Get cooldown time left
+        function getCooldownTimeLeft(spellName) {
+            const cooldownDuration = 12 * 60 * 60 * 1000; // 12 часов
+            const lastUsed = state.cooldowns[spellName];
+            if (!lastUsed) return 0;
+            return Math.max(0, cooldownDuration - (Date.now() - lastUsed));
+        }
+        
         // Buy a spell
         function buySpell(e) {
             const button = e.target;
             const cost = parseInt(button.getAttribute('data-cost'));
             const spell = button.getAttribute('data-skin');
+            
+            if (isOnCooldown(spell)) {
+                const timeLeft = getCooldownTimeLeft(spell);
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                button.textContent = `${hours}ч ${minutes}м`;
+                setTimeout(() => {
+                    updateUI();
+                }, 2000);
+                return;
+            }
+            
             if (state.mana >= cost) {
                 state.mana -= cost;
+                const currentTime = Date.now();
                 const spellData = {
                     name: spell,
-                    purchaseTime: Date.now(),
+                    purchaseTime: currentTime,
                     duration: 1 * 60 * 1000 // 1 минута в миллисекундах
                 };
                 state.inventory.push(spellData);
+                state.cooldowns[spell] = currentTime; // запускаем кулдаун
                 updateUI();
                 saveGame();
                 // Show purchase effect
@@ -571,7 +638,6 @@
                 button.classList.add('bg-red-600');
                 setTimeout(() => {
                     button.textContent = 'Изучить';
-                    button.textContent = 'Изучить';
                     button.classList.remove('bg-red-600');
                     button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
                 }, 1000);
@@ -591,13 +657,23 @@
         closeModal.addEventListener('click', () => upgradeModal.classList.add('hidden'));
         buyButtons.forEach(button => {
             button.addEventListener('click', buySpell);
-            // Disable already purchased spells
+            // Check spell status
             const spell = button.getAttribute('data-skin');
             const isActive = state.inventory.some(spellData => spellData.name === spell);
+            const onCooldown = isOnCooldown(spell);
+            
             if (isActive) {
                 button.innerHTML = '<i class="fas fa-check"></i> В арсенале';
                 button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
                 button.classList.add('bg-green-600', 'cursor-default');
+                button.disabled = true;
+            } else if (onCooldown) {
+                const timeLeft = getCooldownTimeLeft(spell);
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                button.innerHTML = `${hours}ч ${minutes}м`;
+                button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
+                button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
                 button.disabled = true;
             }
         });
@@ -614,7 +690,32 @@
             if (state.inventory.length > 0) {
                 renderInventory();
             }
+            // Update cooldown buttons
+            buyButtons.forEach(button => {
+                const spell = button.getAttribute('data-skin');
+                const isActive = state.inventory.some(spellData => spellData.name === spell);
+                const onCooldown = isOnCooldown(spell);
+                
+                if (!isActive && onCooldown) {
+                    const timeLeft = getCooldownTimeLeft(spell);
+                    const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                    const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                    button.innerHTML = `${hours}ч ${minutes}м`;
+                } else if (!isActive && !onCooldown && button.disabled) {
+                    button.innerHTML = 'Изучить';
+                    button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
+                    button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                    button.disabled = false;
+                }
+            });
         }, 1000);
+        
+        // Navigation function
+        function navigateTo(page) {
+            // Placeholder for navigation logic
+            console.log('Navigating to:', page);
+            // Here you can add actual navigation logic
+        }
     </script>
 </body>
 </html>
