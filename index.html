@@ -712,9 +712,11 @@
         
         // Navigation function
         function navigateTo(page) {
-            // Placeholder for navigation logic
-            console.log('Navigating to:', page);
-            // Here you can add actual navigation logic
+            if (page === 'pvp') {
+                window.location.href = 'pvp.html';
+            } else {
+                console.log('Navigating to:', page);
+            }
         }
     </script>
 </body>
