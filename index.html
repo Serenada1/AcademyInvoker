@@ -221,8 +221,11 @@
                                  class="w-full h-20 md:h-32 object-cover">
                         </div>
                         <div class="p-2 md:p-4">
-                            <h3 class="font-bold text-sm md:text-lg mb-1">Руна богатства</h3>
-                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block">Даёт +1 к вашему золоту</p>
+                            <h3 class="font-bold text-sm md:text-lg mb-1 flex items-center">
+                                Руна богатства
+                                <i class="fas fa-info-circle text-gray-400 ml-1 text-xs md:hidden cursor-pointer" onclick="toggleDescription(this)"></i>
+                            </h3>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Даёт +1 к вашему золоту</p>
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
                                 <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
@@ -241,8 +244,11 @@
                                  class="w-full h-20 md:h-32 object-cover">
                         </div>
                         <div class="p-2 md:p-4">
-                            <h3 class="font-bold text-sm md:text-lg mb-1">Усиление урона</h3>
-                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block">Увеличивает урон на 25%</p>
+                            <h3 class="font-bold text-sm md:text-lg mb-1 flex items-center">
+                                Усиление урона
+                                <i class="fas fa-info-circle text-gray-400 ml-1 text-xs md:hidden cursor-pointer" onclick="toggleDescription(this)"></i>
+                            </h3>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Увеличивает урон на 25%</p>
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
                                 <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
@@ -261,8 +267,11 @@
                                  class="w-full h-20 md:h-32 object-cover">
                         </div>
                         <div class="p-2 md:p-4">
-                            <h3 class="font-bold text-sm md:text-lg mb-1">Волшебство</h3>
-                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block">Увеличивает магическую силу</p>
+                            <h3 class="font-bold text-sm md:text-lg mb-1 flex items-center">
+                                Волшебство
+                                <i class="fas fa-info-circle text-gray-400 ml-1 text-xs md:hidden cursor-pointer" onclick="toggleDescription(this)"></i>
+                            </h3>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Увеличивает магическую силу</p>
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
                                 <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
@@ -284,8 +293,11 @@
                                  class="w-full h-20 md:h-32 object-cover">
                         </div>
                         <div class="p-2 md:p-4">
-                            <h3 class="font-bold text-sm md:text-lg mb-1">Ускорение</h3>
-                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block">Увеличивает скорость кликов</p>
+                            <h3 class="font-bold text-sm md:text-lg mb-1 flex items-center">
+                                Ускорение
+                                <i class="fas fa-info-circle text-gray-400 ml-1 text-xs md:hidden cursor-pointer" onclick="toggleDescription(this)"></i>
+                            </h3>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Увеличивает скорость кликов</p>
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
                                 <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
@@ -487,6 +499,20 @@
             audio.volume = 0.3;
             audio.play();
         }
+        // Toggle description visibility
+        function toggleDescription(icon) {
+            const description = icon.closest('.p-2, .p-4').querySelector('.description');
+            if (description.classList.contains('hidden')) {
+                description.classList.remove('hidden');
+                icon.classList.remove('fa-info-circle');
+                icon.classList.add('fa-times-circle');
+            } else {
+                description.classList.add('hidden');
+                icon.classList.remove('fa-times-circle');
+                icon.classList.add('fa-info-circle');
+            }
+        }
+        
         // Buy a spell
         function buySpell(e) {
             const button = e.target;
