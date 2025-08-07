@@ -95,15 +95,7 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
-        .skin-card:hover::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #f59e0b, #f97316);
-        }
+
         .progress-bar {
             transition: width 0.5s ease;
             position: relative;
@@ -282,9 +274,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Spell 3 -->
-                    <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-purple-700">
-                        <div class="relative">
                     <!-- Spell 4 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-red-700">
                         <div class="relative">
@@ -391,32 +380,56 @@
             playerLevel.textContent = state.level;
             manaMultiplier.textContent = `${state.multiplier}x`;
 
-            // Определяем, сколько нужно для текущего уровня
-            let need = state.level === 1 ? 1000 : 3000;
-            // Считаем, сколько кликов сделано с начала текущего уровня
-            let prev = 0;
+            // Определяем, сколько нужно для следующего уровня
+            let nextLevelRequirement;
             if (state.level === 1) {
-                prev = 0;
-            } else if (state.level === 2) {
-                prev = 1000;
+                nextLevelRequirement = 1000;
             } else {
-                prev = 1000 + (state.level - 2) * 3000;
+                nextLevelRequirement = 1000 + (state.level - 1) * 3000;
             }
-            let done = state.totalMana - prev;
-            done = Math.max(0, done);
-            let left = Math.max(0, need - done);
-            const progressPercent = Math.min(100, (done / need) * 100);
+            
+            let left = Math.max(0, nextLevelRequirement - state.totalMana);
+            let done = nextLevelRequirement - left;
+            const progressPercent = Math.min(100, (done / nextLevelRequirement) * 100);
             manaProgress.style.width = `${progressPercent}%`;
 
-            // Показываем только "Осталось: N"
+            // Показываем прогресс в формате "текущее/требуемое"
             document.getElementById('progress-label').textContent = '';
-            document.getElementById('progress-remaining').textContent = `Осталось: ${left}`;
+            document.getElementById('progress-remaining').textContent = `${state.totalMana}/${nextLevelRequirement}`;
 
             // Update inventory
             renderInventory();
         }
+        // Check and remove expired spells
+        function checkExpiredSpells() {
+            const currentTime = Date.now();
+            const activeSpells = state.inventory.filter(spell => {
+                const timeLeft = spell.purchaseTime + spell.duration - currentTime;
+                return timeLeft > 0;
+            });
+            
+            if (activeSpells.length !== state.inventory.length) {
+                state.inventory = activeSpells;
+                updateUI();
+                saveGame();
+                // Re-enable expired spell buttons
+                buyButtons.forEach(button => {
+                    const spellName = button.getAttribute('data-skin');
+                    const isActive = state.inventory.some(spell => spell.name === spellName);
+                    if (!isActive) {
+                        button.innerHTML = 'Изучить';
+                        button.classList.remove('bg-green-600', 'cursor-default');
+                        button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                        button.disabled = false;
+                    }
+                });
+            }
+        }
+        
         // Render inventory items
         function renderInventory() {
+            checkExpiredSpells();
+            
             if (state.inventory.length === 0) {
                 inventory.innerHTML = `
                     <div class="text-center py-8 text-gray-500 col-span-full">
@@ -431,19 +444,29 @@
                     'Волшебство': './images/MAGICrune.png',
                     'Ускорение': './images/HASTErune.png'
                 };
-                inventory.innerHTML = state.inventory.map(spell => `
-                    <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-600">
-                        <div class="relative">
-                            <img src="${spellImages[spell] || './images/default.png'}"
-                                  alt="${spell}"
-                                  class="w-full h-32 object-cover">
+                
+                const currentTime = Date.now();
+                inventory.innerHTML = state.inventory.map(spell => {
+                    const timeLeft = spell.purchaseTime + spell.duration - currentTime;
+                    const totalSeconds = Math.max(0, Math.floor(timeLeft / 1000));
+                    const minutes = Math.floor(totalSeconds / 60);
+                    const seconds = totalSeconds % 60;
+                    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    return `
+                        <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-600">
+                            <div class="relative">
+                                <img src="${spellImages[spell.name] || './images/default.png'}"
+                                      alt="${spell.name}"
+                                      class="w-full h-32 object-cover">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-lg mb-1">${spell.name}</h3>
+                                <p class="text-gray-300 text-sm">Осталось: ${timeString}</p>
+                            </div>
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">${spell}</h3>
-                            <p class="text-gray-300 text-sm">Изучено</p>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
         // Handle click on Exort sphere
@@ -454,7 +477,14 @@
             state.mana += manaGained;
             state.totalMana += manaGained;
             // Check for level up
-            if (state.totalMana >= state.nextLevel) {
+            let nextLevelRequirement;
+            if (state.level === 1) {
+                nextLevelRequirement = 1000;
+            } else {
+                nextLevelRequirement = 1000 + (state.level - 1) * 3000;
+            }
+            
+            if (state.totalMana >= nextLevelRequirement) {
                 levelUp();
             }
             // Animate sphere for WebApp
@@ -485,12 +515,6 @@
         function levelUp() {
             state.level++;
             state.multiplier = Math.floor(state.level / 5) + 1;
-            // Новая логика для повышения уровня:
-            if (state.level === 2) {
-                state.nextLevel = 1000;
-            } else {
-                state.nextLevel = state.nextLevel + 3000;
-            }
             // Show upgrade modal
             newMultiplier.textContent = `${state.multiplier}x`;
             upgradeModal.classList.remove('hidden');
@@ -520,7 +544,12 @@
             const spell = button.getAttribute('data-skin');
             if (state.mana >= cost) {
                 state.mana -= cost;
-                state.inventory.push(spell);
+                const spellData = {
+                    name: spell,
+                    purchaseTime: Date.now(),
+                    duration: 1 * 60 * 1000 // 1 минута в миллисекундах
+                };
+                state.inventory.push(spellData);
                 updateUI();
                 saveGame();
                 // Show purchase effect
@@ -541,6 +570,7 @@
                 button.classList.remove('bg-yellow-600');
                 button.classList.add('bg-red-600');
                 setTimeout(() => {
+                    button.textContent = 'Изучить';
                     button.textContent = 'Изучить';
                     button.classList.remove('bg-red-600');
                     button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
@@ -563,17 +593,28 @@
             button.addEventListener('click', buySpell);
             // Disable already purchased spells
             const spell = button.getAttribute('data-skin');
-            if (state.inventory.includes(spell)) {
+            const isActive = state.inventory.some(spellData => spellData.name === spell);
+            if (isActive) {
                 button.innerHTML = '<i class="fas fa-check"></i> В арсенале';
                 button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
                 button.classList.add('bg-green-600', 'cursor-default');
                 button.disabled = true;
             }
         });
+        // Clear saved game (temporary)
+        localStorage.removeItem('invokerAcademy');
         // Initialize game
         loadGame();
         // Auto-save every 30 seconds
         setInterval(saveGame, 30000);
+        // Check for expired spells every minute
+        setInterval(checkExpiredSpells, 60000);
+        // Update timers every second
+        setInterval(() => {
+            if (state.inventory.length > 0) {
+                renderInventory();
+            }
+        }, 1000);
     </script>
 </body>
 </html>
