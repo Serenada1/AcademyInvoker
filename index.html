@@ -207,26 +207,25 @@
                 </div>
             </section>
             <!-- Shop Section -->
-            <section class="flex-1 bg-gray-800 rounded-xl p-6 border border-gray-700">
-                <h2 class="text-2xl font-bold mb-6 flex items-center invoker-text">
-                    <img src="./images/flacon.png" alt="Флакон" class="w-7 h-7 mr-3" />
+            <section class="flex-1 bg-gray-800 rounded-xl p-3 md:p-6 border border-gray-700">
+                <h2 class="text-lg md:text-2xl font-bold mb-3 md:mb-6 flex items-center invoker-text">
+                    <img src="./images/flacon.png" alt="Флакон" class="w-5 h-5 md:w-7 md:h-7 mr-2 md:mr-3" />
                     Quick-бусты
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-2 md:gap-4">
                     <!-- Spell 1 -->
                     <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-700">
                         <div class="relative">
                             <img src="./images/GOLDrune.png"
                                  alt="Руна богатства"
-                                 class="w-full h-32 object-cover">
+                                 class="w-full h-20 md:h-32 object-cover">
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Руна богатства</h3>
-                            <p class="text-gray-300 text-sm mb-3">Даёт +1 к вашему золоту</h3>
-                            </p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-yellow-400 font-bold">1 мана</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                        <div class="p-2 md:p-4">
+                            <h3 class="font-bold text-sm md:text-lg mb-1">Руна богатства</h3>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block">Даёт +1 к вашему золоту</p>
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
+                                <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
                                         data-cost="1"
                                         data-skin="Руна богатства">
                                     Изучить
@@ -239,14 +238,14 @@
                         <div class="relative">
                             <img src="./images/DDrune.png"
                                  alt="Усиление урона"
-                                 class="w-full h-32 object-cover">
+                                 class="w-full h-20 md:h-32 object-cover">
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Усиление урона</h3>
-                            <p class="text-gray-300 text-sm mb-3">Увеличивает урон на 25%</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-yellow-400 font-bold">1 мана</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                        <div class="p-2 md:p-4">
+                            <h3 class="font-bold text-sm md:text-lg mb-1">Усиление урона</h3>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block">Увеличивает урон на 25%</p>
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
+                                <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
                                         data-cost="1"
                                         data-skin="Усиление урона">
                                     Изучить
@@ -259,14 +258,14 @@
                         <div class="relative">
                             <img src="./images/MAGICrune.png"
                                  alt="Волшебство"
-                                 class="w-full h-32 object-cover">
+                                 class="w-full h-20 md:h-32 object-cover">
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Волшебство</h3>
-                            <p class="text-gray-300 text-sm mb-3">Увеличивает магическую силу</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-yellow-400 font-bold">1 мана</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                        <div class="p-2 md:p-4">
+                            <h3 class="font-bold text-sm md:text-lg mb-1">Волшебство</h3>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block">Увеличивает магическую силу</p>
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
+                                <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
                                         data-cost="1"
                                         data-skin="Волшебство">
                                     Изучить
@@ -282,14 +281,14 @@
                         <div class="relative">
                             <img src="./images/HASTErune.png"
                                  alt="Ускорение"
-                                 class="w-full h-32 object-cover">
+                                 class="w-full h-20 md:h-32 object-cover">
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Ускорение</h3>
-                            <p class="text-gray-300 text-sm mb-3">Увеличивает скорость кликов</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-yellow-400 font-bold">1 мана</span>
-                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
+                        <div class="p-2 md:p-4">
+                            <h3 class="font-bold text-sm md:text-lg mb-1">Ускорение</h3>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block">Увеличивает скорость кликов</p>
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
+                                <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
+                                <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
                                         data-cost="1"
                                         data-skin="Ускорение">
                                     Изучить
