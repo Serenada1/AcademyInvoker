@@ -131,20 +131,23 @@
             { name: 'Point Booster', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/point_booster.png' },
             { name: 'Energy Booster', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/energy_booster.png' },
             { name: 'Reaver', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/reaver.png' },
-            { name: 'Mystic Staff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/mystic_staff.png' }
+            { name: 'Mystic Staff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/mystic_staff.png' },
+            { name: 'Sacred Relic', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/relic.png' },
+            { name: 'Null Talisman', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/null_talisman.png' },
+            { name: 'Helm of Iron Will', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/helm_of_iron_will.png' }
         ];
         
         let currentTargetItem = null;
+        let usedItems = [];
         
-        // Dota 2 items database
+        // Dota 2 items database (correct recipes from dota2.ru)
         const dotaItems = {
             'daedalus': {
                 name: 'Daedalus',
                 image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/greater_crit.png',
                 components: [
                     { name: 'Crystalys', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/lesser_crit.png' },
-                    { name: 'Demon Edge', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/demon_edge.png' },
-                    { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
+                    { name: 'Demon Edge', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/demon_edge.png' }
                 ]
             },
             'black_king_bar': {
@@ -152,8 +155,7 @@
                 image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/black_king_bar.png',
                 components: [
                     { name: 'Ogre Axe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/ogre_axe.png' },
-                    { name: 'Mithril Hammer', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/mithril_hammer.png' },
-                    { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
+                    { name: 'Mithril Hammer', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/mithril_hammer.png' }
                 ]
             },
             'butterfly': {
@@ -161,8 +163,7 @@
                 image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/butterfly.png',
                 components: [
                     { name: 'Talisman of Evasion', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/talisman_of_evasion.png' },
-                    { name: 'Eaglesong', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/eagle.png' },
-                    { name: 'Quarterstaff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/quarterstaff.png' }
+                    { name: 'Eaglesong', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/eagle.png' }
                 ]
             },
             'assault_cuirass': {
@@ -170,9 +171,7 @@
                 image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/assault.png',
                 components: [
                     { name: 'Platemail', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/platemail.png' },
-                    { name: 'Hyperstone', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/hyperstone.png' },
-                    { name: 'Chainmail', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/chainmail.png' },
-                    { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
+                    { name: 'Hyperstone', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/hyperstone.png' }
                 ]
             },
             'heart_of_tarrasque': {
@@ -180,7 +179,31 @@
                 image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/heart.png',
                 components: [
                     { name: 'Reaver', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/reaver.png' },
-                    { name: 'Vitality Booster', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/vitality_booster.png' },
+                    { name: 'Vitality Booster', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/vitality_booster.png' }
+                ]
+            },
+            'divine_rapier': {
+                name: 'Divine Rapier',
+                image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/rapier.png',
+                components: [
+                    { name: 'Demon Edge', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/demon_edge.png' },
+                    { name: 'Sacred Relic', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/relic.png' }
+                ]
+            },
+            'radiance': {
+                name: 'Radiance',
+                image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/radiance.png',
+                components: [
+                    { name: 'Sacred Relic', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/relic.png' },
+                    { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
+                ]
+            },
+            'veil_of_discord': {
+                name: 'Veil of Discord',
+                image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/veil_of_discord.png',
+                components: [
+                    { name: 'Null Talisman', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/null_talisman.png' },
+                    { name: 'Helm of Iron Will', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/helm_of_iron_will.png' },
                     { name: 'Recipe', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/recipe.png' }
                 ]
             }
@@ -191,7 +214,17 @@
             document.getElementById('item-crafting').classList.remove('hidden');
             
             const itemKeys = Object.keys(dotaItems);
-            const randomItem = dotaItems[itemKeys[Math.floor(Math.random() * itemKeys.length)]];
+            const availableItemKeys = itemKeys.filter(key => !usedItems.includes(key));
+            
+            // If all items used, reset the session
+            if (availableItemKeys.length === 0) {
+                usedItems = [];
+                availableItemKeys.push(...itemKeys);
+            }
+            
+            const randomKey = availableItemKeys[Math.floor(Math.random() * availableItemKeys.length)];
+            const randomItem = dotaItems[randomKey];
+            usedItems.push(randomKey);
             currentTargetItem = randomItem;
             
             document.getElementById('target-item-image').src = randomItem.image;
@@ -303,7 +336,11 @@
             slot.innerHTML = `<i class="fas fa-question text-gray-400 text-2xl"></i>`;
             slot.setAttribute('data-filled', 'false');
             slot.setAttribute('data-selected-item', '');
-            slot.onclick = null;
+            slot.onclick = () => {
+                if (slot.getAttribute('data-filled') === 'true') {
+                    removeComponent(slot);
+                }
+            };
             
             // Restore the item in available items
             const availableItems = document.querySelectorAll('.available-item');
@@ -319,6 +356,7 @@
             document.getElementById('item-crafting').classList.add('hidden');
             document.getElementById('fight-button').classList.remove('hidden');
             currentTargetItem = null;
+            usedItems = []; // Reset session when going back
         }
 
         function showTopPlayers() {
