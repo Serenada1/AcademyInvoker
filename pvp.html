@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PvP - Академия Инвокера</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .invoker-bg {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+        .invoker-text {
+            background: linear-gradient(to right, #f59e0b, #f97316, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+    </style>
+</head>
+<body class="invoker-bg text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8 pb-20">
+        <!-- Header -->
+        <header class="flex items-center justify-between mb-8">
+            <button onclick="goBack()" class="text-yellow-400 hover:text-yellow-300 transition-colors">
+                <i class="fas fa-arrow-left text-xl mr-2"></i>
+                Назад
+            </button>
+            <h1 class="text-3xl font-bold invoker-text">PvP Арена</h1>
+            <div></div>
+        </header>
+
+        <!-- PvP Content -->
+        <main class="text-center">
+            <div class="bg-gray-800 rounded-xl p-8 border border-gray-700 mb-8">
+                <i class="fas fa-sword text-6xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-4">Скоро здесь будут битвы!</h2>
+                <p class="text-gray-300">PvP система находится в разработке</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 z-50">
+        <div class="flex justify-around items-center py-3">
+            <button class="nav-btn flex flex-col items-center p-2 text-yellow-400 transition-colors">
+                <i class="fas fa-sword text-xl mb-1"></i>
+                <span class="text-xs">PvP</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('chest')">
+                <i class="fas fa-treasure-chest text-xl mb-1"></i>
+                <span class="text-xs">Сундук</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('leaderboard')">
+                <i class="fas fa-trophy text-xl mb-1"></i>
+                <span class="text-xs">Рейтинг</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function navigateTo(page) {
+            if (page === 'chest') {
+                // window.location.href = 'chest.html';
+                console.log('Chest page not created yet');
+            } else if (page === 'leaderboard') {
+                // window.location.href = 'leaderboard.html';
+                console.log('Leaderboard page not created yet');
+            }
+        }
+    </script>
+</body>
+</html>
