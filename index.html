@@ -446,14 +446,29 @@
             if (state.totalMana >= state.nextLevel) {
                 levelUp();
             }
-            // Animate sphere
-            exortSphere.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                exortSphere.style.transform = '';
-            }, 100);
+            // Animate sphere for WebApp
+            animateSphereClick();
             // Update UI and save
             updateUI();
             saveGame();
+        }
+        
+        // Animate sphere click for Telegram WebApp
+        function animateSphereClick() {
+            exortSphere.style.transform = 'scale(0.95)';
+            exortSphere.style.filter = 'brightness(1.3) saturate(1.2)';
+            exortSphere.style.boxShadow = `
+                0 0 60px rgba(var(--r2), var(--g2), var(--b2), 1),
+                0 0 100px rgba(var(--r1), var(--g1), var(--b1), 0.8),
+                inset 0 0 40px rgba(255, 255, 255, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.3),
+                inset -15px -15px 30px rgba(var(--r3), var(--g3), var(--b3), 0.4)
+            `;
+            setTimeout(() => {
+                exortSphere.style.transform = '';
+                exortSphere.style.filter = '';
+                exortSphere.style.boxShadow = '';
+            }, 150);
         }
         // Level up the player
         function levelUp() {
@@ -507,8 +522,16 @@
                 }, 1000);
             }
         }
-        // Event Listeners
+        // Event Listeners for WebApp compatibility
         exortSphere.addEventListener('click', handleClick);
+        exortSphere.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            animateSphereClick();
+        });
+        exortSphere.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleClick(e);
+        });
         modalOk.addEventListener('click', () => upgradeModal.classList.add('hidden'));
         closeModal.addEventListener('click', () => upgradeModal.classList.add('hidden'));
         buyButtons.forEach(button => {
