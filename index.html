@@ -26,11 +26,18 @@
             cursor: pointer;
             transition: all 0.2s;
             transform-style: preserve-3d;
-            box-shadow: 0 0 30px rgba(255, 165, 0, 0.5),
-                        inset 0 0 20px rgba(255, 255, 255, 0.2),
-                        inset -10px -10px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 40px rgba(255, 69, 0, 0.8),
+                        0 0 80px rgba(255, 140, 0, 0.4),
+                        inset 0 0 30px rgba(255, 255, 255, 0.3),
+                        inset -15px -15px 30px rgba(139, 0, 0, 0.4);
             position: relative;
             overflow: hidden;
+            background: radial-gradient(circle at 30% 30%, 
+                        rgba(255, 255, 255, 0.8) 0%,
+                        rgba(255, 140, 0, 1) 20%,
+                        rgba(255, 69, 0, 1) 50%,
+                        rgba(139, 0, 0, 1) 80%,
+                        rgba(0, 0, 0, 0.8) 100%);
         }
         .exort-sphere::before {
             content: '';
@@ -48,23 +55,24 @@
             animation: rotate 10s linear infinite;
         }
         @keyframes glow {
-            from { box-shadow: 0 0 20px rgba(255, 165, 0, 0.5); }
-            to { box-shadow: 0 0 40px rgba(255, 165, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.4); }
+            from { 
+                box-shadow: 0 0 40px rgba(255, 69, 0, 0.6),
+                           0 0 80px rgba(255, 140, 0, 0.3);
+            }
+            to { 
+                box-shadow: 0 0 60px rgba(255, 69, 0, 1),
+                           0 0 120px rgba(255, 140, 0, 0.6),
+                           0 0 160px rgba(255, 69, 0, 0.3);
+            }
         }
         .exort-sphere:active {
             transform: scale(0.95) translateY(0px);
             animation: none;
-            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.4),
-                        0 0 40px rgba(255, 165, 0, 0.8);
+            box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.6),
+                        0 0 60px rgba(255, 69, 0, 1),
+                        0 0 100px rgba(255, 140, 0, 0.8);
         }
-        .click-effect {
-            position: absolute;
-            background-color: rgba(255, 166, 0, 0.7);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            animation: pulse 0.5s ease-out forwards;
-        }
+
         .skin-card {
             transition: all 0.3s;
             position: relative;
@@ -150,7 +158,7 @@
             <section class="flex-1 flex flex-col items-center justify-center">
                 <div class="relative mb-8 flex flex-col items-center">
                     <div id="exort-container" class="relative flex justify-center items-center">
-                        <div id="exort-sphere" class="exort-sphere h-48 w-48 md:h-64 md:w-64 rounded-full bg-gradient-to-br from-orange-500 to-yellow-400 shadow-lg shadow-orange-500/50"></div>
+                        <div id="exort-sphere" class="exort-sphere h-48 w-48 md:h-64 md:w-64 rounded-full shadow-lg"></div>
                     </div>
                     <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between w-full max-w-xs mx-auto">
                         <div class="text-gray-300 mb-2 md:mb-0 md:mr-4 flex items-center">
@@ -203,9 +211,9 @@
                             <p class="text-gray-300 text-sm mb-3">Даёт +1 к вашему золоту</h3>
                             </p>
                             <div class="flex justify-between items-center">
-                                <span class="text-yellow-400 font-bold">100 маны</span>
+                                <span class="text-yellow-400 font-bold">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        data-cost="100"
+                                        data-cost="1"
                                         data-skin="Руна богатства">
                                     Изучить
                                 </button>
@@ -223,9 +231,9 @@
                             <h3 class="font-bold text-lg mb-1">Усиление урона</h3>
                             <p class="text-gray-300 text-sm mb-3">Увеличивает урон на 25%</p>
                             <div class="flex justify-between items-center">
-                                <span class="text-yellow-400 font-bold">100 маны</span>
+                                <span class="text-yellow-400 font-bold">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        data-cost="100"
+                                        data-cost="1"
                                         data-skin="Усиление урона">
                                     Изучить
                                 </button>
@@ -241,11 +249,11 @@
                         </div>
                         <div class="p-4">
                             <h3 class="font-bold text-lg mb-1">Волшебство</h3>
-                            <p class="text-gray-300 text-sm mb-3">Мощная звуковая волна</p>
+                            <p class="text-gray-300 text-sm mb-3">Увеличивает магическую силу</p>
                             <div class="flex justify-between items-center">
-                                <span class="text-yellow-400 font-bold">100 маны</span>
+                                <span class="text-yellow-400 font-bold">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        data-cost="100"
+                                        data-cost="1"
                                         data-skin="Волшебство">
                                     Изучить
                                 </button>
@@ -264,11 +272,11 @@
                         </div>
                         <div class="p-4">
                             <h3 class="font-bold text-lg mb-1">Ускорение</h3>
-                            <p class="text-gray-300 text-sm mb-3">Сжигает ману врагов</p>
+                            <p class="text-gray-300 text-sm mb-3">Увеличивает скорость кликов</p>
                             <div class="flex justify-between items-center">
-                                <span class="text-yellow-400 font-bold">100 маны</span>
+                                <span class="text-yellow-400 font-bold">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        data-cost="100"
+                                        data-cost="1"
                                         data-skin="Ускорение">
                                     Изучить
                                 </button>
@@ -415,22 +423,6 @@
         }
         // Handle click on Exort sphere
         function handleClick(e) {
-            // Get click position
-            const rect = exortSphere.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            // Create click effect
-            const effect = document.createElement('div');
-            effect.className = 'click-effect';
-            effect.style.left = `${x}px`;
-            effect.style.top = `${y}px`;
-            effect.style.width = '30px';
-            effect.style.height = '30px';
-            exortContainer.appendChild(effect);
-            // Remove effect after animation
-            setTimeout(() => {
-                effect.remove();
-            }, 500);
             // Update game state
             state.clicks++;
             const manaGained = state.manaPerClick * state.multiplier;
