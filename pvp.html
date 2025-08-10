@@ -58,6 +58,7 @@
                             <p id="target-item-name" class="text-white font-bold"></p>
                         </div>
                         <p id="item-counter" class="text-gray-400 text-sm mt-2">1 из 56</p>
+                        <div id="timer-display" class="text-red-400 font-bold text-xl mt-2">01:00</div>
                     </div>
                     
                     <!-- Component Slots -->
@@ -101,6 +102,67 @@
             </button>
         </div>
     </nav>
+
+    <!-- Top Players Modal -->
+    <div id="top-players-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 border border-gray-700">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-yellow-400 flex items-center">
+                    <i class="fas fa-crown mr-2"></i>
+                    Топ-игроки
+                </h2>
+                <button onclick="closeTopPlayers()" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="flex items-center justify-between bg-yellow-600 text-white p-3 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-xl font-bold mr-3">🥇</span>
+                        <span class="font-bold">ProInvoker</span>
+                    </div>
+                    <span class="font-bold">105/105</span>
+                </div>
+                
+                <div class="flex items-center justify-between bg-gray-600 text-white p-3 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-xl font-bold mr-3">🥈</span>
+                        <span class="font-bold">DotaMaster</span>
+                    </div>
+                    <span class="font-bold">98/105</span>
+                </div>
+                
+                <div class="flex items-center justify-between bg-orange-600 text-white p-3 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-xl font-bold mr-3">🥉</span>
+                        <span class="font-bold">ItemCrafter</span>
+                    </div>
+                    <span class="font-bold">87/105</span>
+                </div>
+                
+                <div class="flex items-center justify-between bg-gray-700 text-white p-3 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-lg font-bold mr-3 text-gray-400">4</span>
+                        <span>CraftingPro</span>
+                    </div>
+                    <span>76/105</span>
+                </div>
+                
+                <div class="flex items-center justify-between bg-gray-700 text-white p-3 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-lg font-bold mr-3 text-gray-400">5</span>
+                        <span>RecipeKing</span>
+                    </div>
+                    <span>65/105</span>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <p class="text-gray-400 text-sm">Ваш результат: <span class="text-yellow-400 font-bold" id="user-score">0/105</span></p>
+            </div>
+        </div>
+    </div>
 
     <script>
         function goBack() {
@@ -213,6 +275,8 @@
         let currentTargetItem = null;
         let usedItems = [];
         let correctAnswers = 0;
+        let gameTimer = null;
+        let timeLeft = 60;
         
         // Dota 2 items database (correct recipes from dota2.ru)
         const dotaItems = {
@@ -1173,6 +1237,18 @@
             document.getElementById('fight-button').classList.add('hidden');
             document.getElementById('item-crafting').classList.remove('hidden');
             
+            // Start 1-minute timer
+            timeLeft = 60;
+            updateTimerDisplay();
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+            
             const itemKeys = Object.keys(dotaItems);
             const availableItemKeys = itemKeys.filter(key => !usedItems.includes(key));
             
@@ -1340,10 +1416,51 @@
             currentTargetItem = null;
             usedItems = []; // Reset session when going back
             correctAnswers = 0; // Reset counter
+            
+            // Clear timer
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').textContent = display;
+            
+            // Change color when time is running out
+            const timerElement = document.getElementById('timer-display');
+            if (timeLeft <= 10) {
+                timerElement.className = 'text-red-500 font-bold text-xl mt-2 animate-pulse';
+            } else if (timeLeft <= 30) {
+                timerElement.className = 'text-yellow-400 font-bold text-xl mt-2';
+            } else {
+                timerElement.className = 'text-green-400 font-bold text-xl mt-2';
+            }
+        }
+        
+        function endGame() {
+            // Clear timer
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+            
+            // Return to main screen
+            backToFight();
         }
 
         function showTopPlayers() {
-            console.log('Showing top players');
+            document.getElementById('top-players-modal').classList.remove('hidden');
+            // Update user score
+            const totalItems = Object.keys(dotaItems).length;
+            document.getElementById('user-score').textContent = `${correctAnswers}/${totalItems}`;
+        }
+        
+        function closeTopPlayers() {
+            document.getElementById('top-players-modal').classList.add('hidden');
         }
     </script>
 </body>
