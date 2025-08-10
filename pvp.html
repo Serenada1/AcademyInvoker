@@ -807,11 +807,12 @@
             // Show result with colored borders
             slots.forEach(slot => {
                 if (isCorrect) {
-                    slot.classList.remove('border-gray-500', 'border-dashed');
-                    slot.classList.add('border-green-400', 'border-solid', 'border-4');
+                    slot.classList.remove('border-gray-500', 'border-dashed', 'bg-gray-600');
+                    slot.classList.add('border-green-400', 'border-solid', 'border-4', 'bg-green-500');
+                    slot.innerHTML = `<i class="fas fa-check text-white text-3xl"></i>`;
                 } else {
-                    slot.classList.remove('border-gray-500');
-                    slot.classList.add('border-red-500', 'border-4');
+                    slot.classList.remove('border-gray-500', 'border-dashed');
+                    slot.classList.add('border-red-500', 'border-solid', 'border-4');
                 }
             });
             
@@ -820,12 +821,6 @@
                 if (isCorrect) {
                     correctAnswers++;
                     startFight(); // Start next item
-                } else {
-                    // Remove colored borders but keep items for editing
-                    slots.forEach(slot => {
-                        slot.classList.remove('border-red-500', 'border-green-400', 'border-solid', 'border-4');
-                        slot.classList.add('border-gray-500', 'border-dashed');
-                    });
                 }
             }, 1000);
         }
@@ -842,6 +837,13 @@
                     removeComponent(slot);
                 }
             };
+            
+            // Reset all slots styling to default when any item is removed
+            const allSlots = document.querySelectorAll('.slot');
+            allSlots.forEach(s => {
+                s.classList.remove('border-red-500', 'border-green-400', 'border-solid', 'border-4', 'bg-green-500');
+                s.classList.add('border-gray-500', 'border-dashed', 'bg-gray-600');
+            });
             
             // Restore the item in available items
             const availableItems = document.querySelectorAll('.available-item');
