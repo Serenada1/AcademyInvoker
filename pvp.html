@@ -760,8 +760,8 @@
             
             finalItems.forEach((item, index) => {
                 const itemDiv = document.createElement('div');
-                itemDiv.className = 'bg-gray-700 hover:bg-gray-600 rounded-lg p-2 cursor-pointer transition-colors available-item';
-                itemDiv.innerHTML = `<img src="${item.image}" alt="${item.name}" class="w-12 h-12 mx-auto">`;
+                itemDiv.className = 'bg-gray-700 hover:bg-gray-600 rounded-lg p-1 cursor-pointer transition-colors available-item';
+                itemDiv.innerHTML = `<img src="${item.image}" alt="${item.name}" class="w-14 h-14 mx-auto">`;
                 itemDiv.setAttribute('data-item-name', item.name);
                 itemDiv.setAttribute('data-item-image', item.image);
                 itemDiv.onclick = () => selectItem(itemDiv);
@@ -780,8 +780,9 @@
                     slot.innerHTML = `<img src="${itemImage}" alt="${itemName}" class="w-12 h-12">`;
                     slot.setAttribute('data-filled', 'true');
                     slot.setAttribute('data-selected-item', itemName);
-                    itemElement.style.opacity = '0.5';
-                    itemElement.onclick = null;
+                    itemElement.style.opacity = '0.3';
+                    itemElement.style.filter = 'blur(1px)';
+                    itemElement.onclick = () => returnItemFromAvailable(itemElement);
                     
                     // Check if all slots are filled
                     const filledSlots = document.querySelectorAll('.slot[data-filled="true"]');
@@ -806,8 +807,8 @@
             // Show result with colored borders
             slots.forEach(slot => {
                 if (isCorrect) {
-                    slot.classList.remove('border-gray-500');
-                    slot.classList.add('border-green-500', 'border-4');
+                    slot.classList.remove('border-gray-500', 'border-dashed');
+                    slot.classList.add('border-green-400', 'border-solid', 'border-4');
                 } else {
                     slot.classList.remove('border-gray-500');
                     slot.classList.add('border-red-500', 'border-4');
@@ -822,8 +823,8 @@
                 } else {
                     // Remove colored borders but keep items for editing
                     slots.forEach(slot => {
-                        slot.classList.remove('border-red-500', 'border-green-500', 'border-4');
-                        slot.classList.add('border-gray-500');
+                        slot.classList.remove('border-red-500', 'border-green-400', 'border-solid', 'border-4');
+                        slot.classList.add('border-gray-500', 'border-dashed');
                     });
                 }
             }, 1000);
@@ -847,9 +848,23 @@
             availableItems.forEach(item => {
                 if (item.getAttribute('data-item-name') === itemName) {
                     item.style.opacity = '1';
+                    item.style.filter = 'none';
                     item.onclick = () => selectItem(item);
                 }
             });
+        }
+        
+        function returnItemFromAvailable(itemElement) {
+            const itemName = itemElement.getAttribute('data-item-name');
+            
+            // Find the slot with this item
+            const slots = document.querySelectorAll('.slot');
+            for (let slot of slots) {
+                if (slot.getAttribute('data-selected-item') === itemName) {
+                    removeComponent(slot);
+                    break;
+                }
+            }
         }
         
         function backToFight() {
