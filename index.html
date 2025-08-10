@@ -183,18 +183,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
-                        <div class="text-yellow-400 mb-1"><i class="fas fa-bolt"></i> Кликов</div>
-                        <div id="click-count" class="text-2xl font-bold">0</div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
-                        <div class="text-yellow-400 mb-1"><i class="fas fa-coins"></i> Маны/клик</div>
-                        <div id="mana-per-click" class="text-2xl font-bold">1</div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
-                        <div class="text-yellow-400 mb-1 flex items-center justify-center"><i class="fas fa-magic mr-1"></i>Усиление</div>
-                        <div id="mana-multiplier" class="text-2xl font-bold">1x</div>
+                <div class="flex justify-center mb-8">
+                    <div class="grid grid-cols-3 gap-4 max-w-lg">
+                        <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
+                            <div class="text-yellow-400 mb-1"><i class="fas fa-tachometer-alt"></i> Клик/сек</div>
+                            <div id="clicks-per-second" class="text-2xl font-bold">0</div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
+                            <div class="text-yellow-400 mb-1 flex items-center justify-center"><i class="fas fa-magic mr-1"></i>Маны/клик</div>
+                            <div id="mana-multiplier" class="text-2xl font-bold">1x</div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
+                            <div class="text-yellow-400 mb-1"><i class="fas fa-calendar-day"></i> Лимит</div>
+                            <div id="daily-clicks" class="text-2xl font-bold">0/1000</div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -263,7 +265,7 @@
                                 Волшебство
                                 <i class="fas fa-info-circle text-gray-400 ml-1 text-xs md:hidden cursor-pointer" onclick="toggleDescription(this)"></i>
                             </h3>
-                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Увеличивает магическую силу</p>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Увеличивает значение маны/клик</p>
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
                                 <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
@@ -286,7 +288,7 @@
                                 Ускорение
                                 <i class="fas fa-info-circle text-gray-400 ml-1 text-xs md:hidden cursor-pointer" onclick="toggleDescription(this)"></i>
                             </h3>
-                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Увеличивает скорость кликов</p>
+                            <p class="text-gray-300 text-xs md:text-sm mb-2 md:mb-3 hidden md:block description">Увеличивает ежедневный лимит</p>
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
                                 <span class="text-yellow-400 font-bold text-xs md:text-sm">1 мана</span>
                                 <button class="buy-btn bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 md:px-3 md:py-1 rounded text-xs md:text-sm"
@@ -342,7 +344,7 @@
             </div>
             <div class="text-center mb-4">
                 <i class="fas fa-hat-wizard text-4xl text-yellow-500 mb-3 animate-bounce"></i>
-                <p>Теперь вы получаете <span id="new-multiplier" class="text-yellow-400 font-bold">2x</span> больше маны за клик!</p>
+                <p>Теперь вы получаете НА <span id="new-multiplier" class="text-yellow-400 font-bold">2x</span> БОЛЬШЕ маны за клик!</p>
                 <p class="text-gray-300 mt-2">Продолжайте изучать новые заклинания</p>
             </div>
             <button id="modal-ok" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded font-bold transition-all hover:scale-105">
@@ -361,13 +363,16 @@
             level: 1,
             inventory: [],
             nextLevel: 100,
-            cooldowns: {} // хранит время последнего использования каждого буста
+            cooldowns: {}, // хранит время последнего использования каждого буста
+            clicksPerSecond: 0,
+            recentClicks: [], // массив времен последних кликов
+            dailyClicks: 0, // количество кликов за сегодня
+            lastClickDate: null // дата последнего клика
         };
         // DOM Elements
         const manaCounter = document.getElementById('mana-counter');
         const totalClicks = document.getElementById('total-clicks');
-        const clickCount = document.getElementById('click-count');
-        const manaPerClick = document.getElementById('mana-per-click');
+        const clicksPerSecondElement = document.getElementById('clicks-per-second');
         const playerLevel = document.getElementById('player-level');
         const manaMultiplier = document.getElementById('mana-multiplier');
         const manaProgress = document.getElementById('mana-progress');
@@ -391,14 +396,25 @@
         function saveGame() {
             localStorage.setItem('invokerAcademy', JSON.stringify(state));
         }
+        // Check and reset daily clicks
+        function checkDailyReset() {
+            const today = new Date().toDateString();
+            if (state.lastClickDate !== today) {
+                state.dailyClicks = 0;
+                state.lastClickDate = today;
+                saveGame();
+            }
+        }
+        
         // Update all UI elements
         function updateUI() {
+            checkDailyReset();
             manaCounter.textContent = state.mana.toLocaleString();
             totalClicks.textContent = state.clicks.toLocaleString();
-            clickCount.textContent = state.clicks.toLocaleString();
-            manaPerClick.textContent = state.manaPerClick;
+            document.getElementById('clicks-per-second').textContent = state.clicksPerSecond;
+            document.getElementById('daily-clicks').textContent = `${state.dailyClicks}/1000`;
             playerLevel.textContent = state.level;
-            manaMultiplier.textContent = `${state.multiplier}x`;
+            manaMultiplier.textContent = `${state.manaPerClick}x`;
 
             // Определяем, сколько нужно для следующего уровня
             let nextLevelRequirement;
@@ -501,8 +517,24 @@
         }
         // Handle click on Exort sphere
         function handleClick(e) {
+            checkDailyReset();
+            
+            // Check daily click limit
+            if (state.dailyClicks >= 1000) {
+                return; // Не обрабатываем клик если лимит исчерпан
+            }
+            
             // Update game state
             state.clicks++;
+            state.dailyClicks++;
+            
+            // Track clicks per second
+            const now = Date.now();
+            state.recentClicks.push(now);
+            // Keep only clicks from the last second
+            state.recentClicks = state.recentClicks.filter(time => now - time <= 1000);
+            state.clicksPerSecond = state.recentClicks.length;
+            
             let manaGained = state.manaPerClick * state.multiplier;
             
             // Check if damage enhancement rune is active
@@ -552,9 +584,15 @@
         function levelUp() {
             state.level++;
             state.multiplier = Math.floor(state.level / 5) + 1;
-            // Show upgrade modal
-            newMultiplier.textContent = `${state.multiplier}x`;
-            upgradeModal.classList.remove('hidden');
+            
+            // Увеличиваем manaPerClick при достижении 2 уровня
+            if (state.level === 2) {
+                state.manaPerClick++;
+                // Show upgrade modal only for level 2
+                newMultiplier.textContent = `${state.multiplier}x`;
+                upgradeModal.classList.remove('hidden');
+            }
+            
             // Play level up sound
             const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
             audio.volume = 0.3;
@@ -596,7 +634,7 @@
             const cost = parseInt(button.getAttribute('data-cost'));
             const spell = button.getAttribute('data-skin');
             
-            if (isOnCooldown(spell)) {
+            if (spell !== 'Волшебство' && isOnCooldown(spell)) {
                 const timeLeft = getCooldownTimeLeft(spell);
                 const hours = Math.floor(timeLeft / (60 * 60 * 1000));
                 const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
@@ -609,28 +647,41 @@
             
             if (state.mana >= cost) {
                 state.mana -= cost;
-                const currentTime = Date.now();
-                const spellData = {
-                    name: spell,
-                    purchaseTime: currentTime,
-                    duration: 1 * 60 * 1000 // 1 минута в миллисекундах
-                };
-                state.inventory.push(spellData);
-                state.cooldowns[spell] = currentTime; // запускаем кулдаун
+                
+                // Увеличиваем manaPerClick при покупке Волшебства
+                if (spell === 'Волшебство') {
+                    state.manaPerClick++;
+                } else {
+                    const currentTime = Date.now();
+                    const spellData = {
+                        name: spell,
+                        purchaseTime: currentTime,
+                        duration: 1 * 60 * 1000 // 1 минута в миллисекундах
+                    };
+                    state.inventory.push(spellData);
+                }
+                
+                if (spell !== 'Волшебство') {
+                    state.cooldowns[spell] = Date.now(); // запускаем кулдаун
+                }
                 updateUI();
                 saveGame();
                 // Show purchase effect
-                button.textContent = 'Изучено!';
-                button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
-                button.classList.add('bg-green-600', 'cursor-default');
-                button.disabled = true;
-                setTimeout(() => {
-                    button.innerHTML = '<i class="fas fa-check"></i> В арсенале';
-                }, 500);
-                // Play purchase sound
-                const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3');
-                audio.volume = 0.3;
-                audio.play();
+                if (spell === 'Волшебство') {
+                    button.textContent = 'Изучено!';
+                    setTimeout(() => {
+                        button.textContent = 'Изучить';
+                    }, 1000);
+                } else {
+                    button.textContent = 'Изучено!';
+                    button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                    button.classList.add('bg-green-600', 'cursor-default');
+                    button.disabled = true;
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="fas fa-check"></i> В арсенале';
+                    }, 500);
+                }
+
             } else {
                 // Not enough mana
                 button.textContent = 'Не хватает маны!';
