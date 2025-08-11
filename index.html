@@ -302,19 +302,7 @@
                 </div>
             </section>
         </main>
-        <!-- Inventory Section -->
-        <section class="mt-12 bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h2 class="text-2xl font-bold mb-6 flex items-center invoker-text">
-                <i class="fas fa-scroll text-yellow-500 mr-3"></i>
-                Ваши заклинания
-            </h2>
-            <div id="inventory" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div class="text-center py-8 text-gray-500">
-                    <i class="fas fa-book-open text-4xl mb-2"></i>
-                    <p>Здесь будут изученные заклинания</p>
-                </div>
-            </div>
-        </section>
+
     </div>
     
     <!-- Bottom Navigation Bar -->
@@ -367,7 +355,10 @@
             clicksPerSecond: 0,
             recentClicks: [], // массив времен последних кликов
             dailyClicks: 0, // количество кликов за сегодня
-            lastClickDate: null // дата последнего клика
+            lastClickDate: null, // дата последнего клика
+            hasteUpgrades: 0, // количество покупок Ускорения
+            gold: 0, // платная валюта
+            dailyMana: 0 // мана заработанная за сегодня
         };
         // DOM Elements
         const manaCounter = document.getElementById('mana-counter');
@@ -401,6 +392,7 @@
             const today = new Date().toDateString();
             if (state.lastClickDate !== today) {
                 state.dailyClicks = 0;
+                state.dailyMana = 0;
                 state.lastClickDate = today;
                 saveGame();
             }
@@ -412,7 +404,8 @@
             manaCounter.textContent = state.mana.toLocaleString();
             totalClicks.textContent = state.clicks.toLocaleString();
             document.getElementById('clicks-per-second').textContent = state.clicksPerSecond;
-            document.getElementById('daily-clicks').textContent = `${state.dailyClicks}/1000`;
+            const dailyManaLimit = 1000 + (state.hasteUpgrades * 500);
+            document.getElementById('daily-clicks').textContent = `${state.dailyMana}/${dailyManaLimit}`;
             playerLevel.textContent = state.level;
             manaMultiplier.textContent = `${state.manaPerClick}x`;
 
@@ -436,92 +429,18 @@
             // Update inventory
             renderInventory();
         }
-        // Check and remove expired spells
-        function checkExpiredSpells() {
-            const currentTime = Date.now();
-            const activeSpells = state.inventory.filter(spell => {
-                const timeLeft = spell.purchaseTime + spell.duration - currentTime;
-                return timeLeft > 0;
-            });
-            
-            if (activeSpells.length !== state.inventory.length) {
-                state.inventory = activeSpells;
-                updateUI();
-                saveGame();
-                // Update expired spell buttons
-                buyButtons.forEach(button => {
-                    const spellName = button.getAttribute('data-skin');
-                    const isActive = state.inventory.some(spell => spell.name === spellName);
-                    const onCooldown = isOnCooldown(spellName);
-                    
-                    if (!isActive && onCooldown) {
-                        const timeLeft = getCooldownTimeLeft(spellName);
-                        const hours = Math.floor(timeLeft / (60 * 60 * 1000));
-                        const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
-                        button.innerHTML = `${hours}ч ${minutes}м`;
-                        button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
-                        button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
-                        button.disabled = true;
-                    } else if (!isActive && !onCooldown) {
-                        button.innerHTML = 'Изучить';
-                        button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
-                        button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
-                        button.disabled = false;
-                    }
-                });
-            }
-        }
-        
-        // Render inventory items
-        function renderInventory() {
-            checkExpiredSpells();
-            
-            if (state.inventory.length === 0) {
-                inventory.innerHTML = `
-                    <div class="text-center py-8 text-gray-500 col-span-full">
-                        <i class="fas fa-book-open text-4xl mb-2"></i>
-                        <p>Здесь будут изученные заклинания</p>
-                    </div>
-                `;
-            } else {
-                const spellImages = {
-                    'Руна богатства': './images/GOLDrune.png',
-                    'Усиление урона': './images/DDrune.png',
-                    'Волшебство': './images/MAGICrune.png',
-                    'Ускорение': './images/HASTErune.png'
-                };
-                
-                const currentTime = Date.now();
-                inventory.innerHTML = state.inventory.map(spell => {
-                    const timeLeft = spell.purchaseTime + spell.duration - currentTime;
-                    const totalSeconds = Math.max(0, Math.floor(timeLeft / 1000));
-                    const minutes = Math.floor(totalSeconds / 60);
-                    const seconds = totalSeconds % 60;
-                    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    
-                    return `
-                        <div class="skin-card bg-gray-700 rounded-lg overflow-hidden border border-yellow-600">
-                            <div class="relative">
-                                <img src="${spellImages[spell.name] || './images/default.png'}"
-                                      alt="${spell.name}"
-                                      class="w-full h-32 object-cover">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-bold text-lg mb-1">${spell.name}</h3>
-                                <p class="text-gray-300 text-sm">Осталось: ${timeString}</p>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
+
         // Handle click on Exort sphere
         function handleClick(e) {
             checkDailyReset();
             
-            // Check daily click limit
-            if (state.dailyClicks >= 1000) {
-                return; // Не обрабатываем клик если лимит исчерпан
+            // Всегда показываем анимацию
+            animateSphereClick();
+            
+            // Check daily mana limit
+            const dailyManaLimit = 1000 + (state.hasteUpgrades * 500);
+            if (state.dailyMana >= dailyManaLimit) {
+                return; // Не обрабатываем клик если лимит маны исчерпан
             }
             
             // Update game state
@@ -543,8 +462,13 @@
                 manaGained *= 2; // Double the mana gain
             }
             
+            // Ограничиваем ману дневным лимитом
+            const remainingDailyMana = dailyManaLimit - state.dailyMana;
+            manaGained = Math.min(manaGained, remainingDailyMana);
+            
             state.mana += manaGained;
             state.totalMana += manaGained;
+            state.dailyMana += manaGained;
             // Check for level up
             let nextLevelRequirement;
             if (state.level === 1) {
@@ -556,8 +480,6 @@
             if (state.totalMana >= nextLevelRequirement) {
                 levelUp();
             }
-            // Animate sphere for WebApp
-            animateSphereClick();
             // Update UI and save
             updateUI();
             saveGame();
@@ -586,7 +508,7 @@
             state.multiplier = Math.floor(state.level / 5) + 1;
             
             // Увеличиваем manaPerClick при достижении 2 уровня
-            if (state.level === 2) {
+            if (state.level === 2 && state.manaPerClick < 10) {
                 state.manaPerClick++;
                 // Show upgrade modal only for level 2
                 newMultiplier.textContent = `${state.multiplier}x`;
@@ -634,7 +556,7 @@
             const cost = parseInt(button.getAttribute('data-cost'));
             const spell = button.getAttribute('data-skin');
             
-            if (spell !== 'Волшебство' && isOnCooldown(spell)) {
+            if (spell !== 'Волшебство' && spell !== 'Руна богатства' && isOnCooldown(spell)) {
                 const timeLeft = getCooldownTimeLeft(spell);
                 const hours = Math.floor(timeLeft / (60 * 60 * 1000));
                 const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
@@ -649,9 +571,13 @@
                 state.mana -= cost;
                 
                 // Увеличиваем manaPerClick при покупке Волшебства
-                if (spell === 'Волшебство') {
+                if (spell === 'Волшебство' && state.manaPerClick < 10) {
                     state.manaPerClick++;
-                } else {
+                } else if (spell === 'Ускорение' && (1000 + state.hasteUpgrades * 500) < 4000) {
+                    state.hasteUpgrades++;
+                } else if (spell === 'Руна богатства') {
+                    state.gold++;
+                } else if (spell !== 'Волшебство' && spell !== 'Ускорение' && spell !== 'Руна богатства') {
                     const currentTime = Date.now();
                     const spellData = {
                         name: spell,
@@ -661,7 +587,7 @@
                     state.inventory.push(spellData);
                 }
                 
-                if (spell !== 'Волшебство') {
+                if (spell !== 'Волшебство' && spell !== 'Ускорение' && spell !== 'Руна богатства') {
                     state.cooldowns[spell] = Date.now(); // запускаем кулдаун
                 }
                 updateUI();
@@ -670,8 +596,44 @@
                 if (spell === 'Волшебство') {
                     button.textContent = 'Изучено!';
                     setTimeout(() => {
+                        if (state.manaPerClick >= 10) {
+                            button.textContent = 'MAX';
+                            button.disabled = true;
+                            button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700', 'bg-green-600', 'bg-red-600');
+                            button.classList.add('bg-transparent', 'cursor-default');
+                            button.style.border = 'none';
+                        } else {
+                            button.textContent = 'Изучить';
+                        }
+                    }, 1000);
+                } else if (spell === 'Ускорение') {
+                    button.textContent = 'Изучено!';
+                    setTimeout(() => {
+                        const dailyLimit = 1000 + (state.hasteUpgrades * 500);
+                        if (dailyLimit >= 4000) {
+                            button.textContent = 'MAX';
+                            button.disabled = true;
+                            button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700', 'bg-green-600', 'bg-red-600');
+                            button.classList.add('bg-transparent', 'cursor-default');
+                            button.style.border = 'none';
+                        } else {
+                            button.textContent = 'Изучить';
+                        }
+                    }, 1000);
+                } else if (spell === 'Руна богатства') {
+                    button.textContent = 'Изучено!';
+                    setTimeout(() => {
                         button.textContent = 'Изучить';
                     }, 1000);
+                } else if (spell === 'Усиление урона') {
+                    button.textContent = 'Изучено!';
+                    button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                    button.classList.add('bg-green-600', 'cursor-default');
+                    button.disabled = true;
+                    setTimeout(() => {
+                        // Начинаем отображать таймер на кнопке
+                        updateUI();
+                    }, 500);
                 } else {
                     button.textContent = 'Изучено!';
                     button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
@@ -713,12 +675,51 @@
             const isActive = state.inventory.some(spellData => spellData.name === spell);
             const onCooldown = isOnCooldown(spell);
             
-            if (isActive) {
+            if (spell === 'Волшебство' && state.manaPerClick >= 10) {
+                button.textContent = 'MAX';
+                button.disabled = true;
+                button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700', 'bg-green-600', 'bg-red-600');
+                button.classList.add('bg-transparent', 'cursor-default');
+                button.style.border = 'none';
+            } else if (spell === 'Ускорение' && (1000 + state.hasteUpgrades * 500) >= 4000) {
+                button.textContent = 'MAX';
+                button.disabled = true;
+                button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700', 'bg-green-600', 'bg-red-600');
+                button.classList.add('bg-transparent', 'cursor-default');
+                button.style.border = 'none';
+            } else if (spell === 'Усиление урона' && isActive) {
+                const activeSpell = state.inventory.find(spellData => spellData.name === spell);
+                if (activeSpell) {
+                    const currentTime = Date.now();
+                    const timeLeft = activeSpell.purchaseTime + activeSpell.duration - currentTime;
+                    const totalSeconds = Math.max(0, Math.floor(timeLeft / 1000));
+                    const minutes = Math.floor(totalSeconds / 60);
+                    const seconds = totalSeconds % 60;
+                    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    button.innerHTML = timeString;
+                    button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                    button.classList.add('bg-green-600', 'cursor-default');
+                    button.disabled = true;
+                }
+            } else if (spell === 'Усиление урона' && onCooldown && !isActive) {
+                const timeLeft = getCooldownTimeLeft(spell);
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                button.innerHTML = `${hours}ч ${minutes}м`;
+                button.classList.remove('bg-green-600', 'cursor-default');
+                button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                button.disabled = true;
+            } else if (spell === 'Усиление урона' && !isActive && !onCooldown) {
+                button.innerHTML = 'Изучить';
+                button.classList.remove('bg-green-600', 'cursor-default');
+                button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                button.disabled = false;
+            } else if (isActive) {
                 button.innerHTML = '<i class="fas fa-check"></i> В арсенале';
                 button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
                 button.classList.add('bg-green-600', 'cursor-default');
                 button.disabled = true;
-            } else if (onCooldown) {
+            } else if (onCooldown && !isActive) {
                 const timeLeft = getCooldownTimeLeft(spell);
                 const hours = Math.floor(timeLeft / (60 * 60 * 1000));
                 const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
@@ -734,29 +735,60 @@
         loadGame();
         // Auto-save every 30 seconds
         setInterval(saveGame, 30000);
-        // Check for expired spells every minute
-        setInterval(checkExpiredSpells, 60000);
         // Update timers every second
         setInterval(() => {
-            if (state.inventory.length > 0) {
-                renderInventory();
-            }
+            // Remove expired spells
+            const currentTime = Date.now();
+            state.inventory = state.inventory.filter(spell => {
+                const timeLeft = spell.purchaseTime + spell.duration - currentTime;
+                return timeLeft > 0;
+            });
+            
             // Update cooldown buttons
             buyButtons.forEach(button => {
                 const spell = button.getAttribute('data-skin');
                 const isActive = state.inventory.some(spellData => spellData.name === spell);
                 const onCooldown = isOnCooldown(spell);
                 
-                if (!isActive && onCooldown) {
+                if (isActive && spell === 'Усиление урона') {
+                    const activeSpell = state.inventory.find(spellData => spellData.name === spell);
+                    if (activeSpell) {
+                        const currentTime = Date.now();
+                        const timeLeft = activeSpell.purchaseTime + activeSpell.duration - currentTime;
+                        const totalSeconds = Math.max(0, Math.floor(timeLeft / 1000));
+                        const minutes = Math.floor(totalSeconds / 60);
+                        const seconds = totalSeconds % 60;
+                        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        button.innerHTML = timeString;
+                        button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                        button.classList.add('bg-green-600', 'cursor-default');
+                        button.disabled = true;
+                    }
+                } else if (!isActive && onCooldown) {
                     const timeLeft = getCooldownTimeLeft(spell);
                     const hours = Math.floor(timeLeft / (60 * 60 * 1000));
                     const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
                     button.innerHTML = `${hours}ч ${minutes}м`;
-                } else if (!isActive && !onCooldown && button.disabled) {
+                    button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
+                    button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                    button.disabled = true;
+                } else if (!isActive && !onCooldown && (spell === 'Усиление урона' || (spell !== 'Волшебство' && spell !== 'Ускорение' && spell !== 'Руна богатства'))) {
                     button.innerHTML = 'Изучить';
                     button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
                     button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
                     button.disabled = false;
+                } else if (spell === 'Волшебство' && state.manaPerClick >= 10) {
+                    button.textContent = 'MAX';
+                    button.disabled = true;
+                    button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700', 'bg-green-600', 'bg-red-600');
+                    button.classList.add('bg-transparent', 'cursor-default');
+                    button.style.border = 'none';
+                } else if (spell === 'Ускорение' && (1000 + state.hasteUpgrades * 500) >= 4000) {
+                    button.textContent = 'MAX';
+                    button.disabled = true;
+                    button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700', 'bg-green-600', 'bg-red-600');
+                    button.classList.add('bg-transparent', 'cursor-default');
+                    button.style.border = 'none';
                 }
             });
         }, 1000);
