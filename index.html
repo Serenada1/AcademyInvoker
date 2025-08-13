@@ -312,7 +312,7 @@
                 <i class="fas fa-sword text-xl mb-1"></i>
                 <span class="text-xs">PvP</span>
             </button>
-            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('chest')">
+            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('cases')">
                 <i class="fas fa-treasure-chest text-xl mb-1"></i>
                 <span class="text-xs">Сундук</span>
             </button>
@@ -797,6 +797,8 @@
         function navigateTo(page) {
             if (page === 'pvp') {
                 window.location.href = 'pvp.html';
+            } else if (page === 'cases') {
+                window.location.href = 'cases.html';
             } else {
                 console.log('Navigating to:', page);
             }
