@@ -18,12 +18,208 @@
             <div class="w-20"></div>
         </div>
 
-        <!-- Content -->
-        <div class="text-center">
-            <div class="text-8xl mb-8">🏗️</div>
-            <h2 class="text-2xl font-bold mb-4">Страница в разработке</h2>
-            <p class="text-gray-400 text-lg">Скоро здесь появится система сундуков!</p>
+        <!-- Cases Section -->
+        <div class="pb-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Immortal Treasure -->
+                <div class="bg-gradient-to-br from-yellow-600 to-orange-600 rounded-xl p-6 text-center border-2 border-yellow-400 hover:scale-105 transition-transform cursor-pointer" onclick="openCase('immortal')">
+                    <div class="text-6xl mb-4">💎</div>
+                    <h3 class="text-xl font-bold mb-2">Immortal Treasure</h3>
+                    <p class="text-yellow-100 mb-4">Легендарные предметы</p>
+                    <div class="text-2xl font-bold text-yellow-200 mb-4">Бесплатно</div>
+                    <button class="bg-yellow-500 hover:bg-yellow-400 px-6 py-2 rounded-lg transition-colors w-full font-bold">
+                        Открыть
+                    </button>
+                </div>
+
+                <!-- Rare Treasure -->
+                <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-6 text-center border-2 border-purple-400 hover:scale-105 transition-transform cursor-pointer" onclick="openCase('rare')">
+                    <div class="text-6xl mb-4">🎁</div>
+                    <h3 class="text-xl font-bold mb-2">Rare Treasure</h3>
+                    <p class="text-purple-100 mb-4">Редкие предметы</p>
+                    <div class="text-2xl font-bold text-purple-200 mb-4">Бесплатно</div>
+                    <button class="bg-purple-500 hover:bg-purple-400 px-6 py-2 rounded-lg transition-colors w-full font-bold">
+                        Открыть
+                    </button>
+                </div>
+
+                <!-- Common Treasure -->
+                <div class="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl p-6 text-center border-2 border-blue-400 hover:scale-105 transition-transform cursor-pointer" onclick="openCase('common')">
+                    <div class="text-6xl mb-4">📦</div>
+                    <h3 class="text-xl font-bold mb-2">Common Treasure</h3>
+                    <p class="text-blue-100 mb-4">Обычные предметы</p>
+                    <div class="text-2xl font-bold text-blue-200 mb-4">Бесплатно</div>
+                    <button class="bg-blue-500 hover:bg-blue-400 px-6 py-2 rounded-lg transition-colors w-full font-bold">
+                        Открыть
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opening Modal -->
+        <div id="openingModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center hidden z-50">
+            <div class="bg-gray-800 rounded-xl p-8 text-center max-w-md mx-4 border border-gray-600">
+                <div id="caseIcon" class="text-8xl mb-4 animate-bounce">💎</div>
+                <h3 class="text-2xl font-bold mb-4">Открываем сундук...</h3>
+                <div class="w-full bg-gray-700 rounded-full h-3 mb-4">
+                    <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-100" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roulette Modal -->
+        <div id="rouletteModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center hidden z-50">
+            <div class="bg-gray-800 rounded-xl p-6 w-full max-w-none mx-4 border border-gray-600">
+                <h3 class="text-2xl font-bold mb-6 text-center">Выпал предмет!</h3>
+                <div class="relative overflow-hidden bg-gray-700 rounded-lg mb-6" style="height: 140px; width: 95vw;">
+                    <div id="rouletteStrip" class="flex absolute top-0" style="height: 120px;">
+                        <!-- Items will be generated here -->
+                    </div>
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-full bg-red-500 z-10"></div>
+                </div>
+                <div class="text-center">
+                    <button id="claimBtn" class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-lg transition-colors font-bold" onclick="claimReward()" style="display: none;">
+                        Забрать награду
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+    
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 z-50">
+        <div class="flex justify-around items-center py-3">
+            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('pvp')">
+                <i class="fas fa-sword text-xl mb-1"></i>
+                <span class="text-xs">PvP</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center p-2 text-yellow-400 transition-colors">
+                <i class="fas fa-treasure-chest text-xl mb-1"></i>
+                <span class="text-xs">Сундук</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center p-2 text-gray-400 hover:text-yellow-400 transition-colors" onclick="navigateTo('leaderboard')">
+                <i class="fas fa-trophy text-xl mb-1"></i>
+                <span class="text-xs">Рейтинг</span>
+            </button>
+        </div>
+    </nav>
+    
+    <script>
+        const dotaItems = {
+            immortal: [
+                { name: 'Pudge Hook', rarity: 'Immortal', price: 400 },
+                { name: 'Invoker Cape', rarity: 'Immortal', price: 150 },
+                { name: 'Axe Weapon', rarity: 'Immortal', price: 80 }
+            ],
+            rare: [
+                { name: 'CM Arcana', rarity: 'Rare', price: 35 },
+                { name: 'Drow Bow', rarity: 'Rare', price: 25 }
+            ],
+            common: [
+                { name: 'Pudge Hat', rarity: 'Common', price: 8 },
+                { name: 'Sven Sword', rarity: 'Common', price: 12 }
+            ]
+        };
+
+        let currentCaseType = null;
+        let wonItem = null;
+
+        function openCase(caseType) {
+            currentCaseType = caseType;
+            const icons = { immortal: '💎', rare: '🎁', common: '📦' };
+            document.getElementById('caseIcon').textContent = icons[caseType];
+            document.getElementById('openingModal').classList.remove('hidden');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                document.getElementById('progressBar').style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('openingModal').classList.add('hidden');
+                        showRoulette();
+                    }, 500);
+                }
+            }, 50);
+        }
+
+        function showRoulette() {
+            const items = dotaItems[currentCaseType];
+            const rouletteStrip = document.getElementById('rouletteStrip');
+            
+            let stripHTML = '';
+            for (let i = 0; i < 300; i++) {
+                const item = items[Math.floor(Math.random() * items.length)];
+                const rarityColors = {
+                    'Immortal': 'border-yellow-400 bg-yellow-900',
+                    'Rare': 'border-purple-400 bg-purple-900',
+                    'Common': 'border-blue-400 bg-blue-900'
+                };
+                stripHTML += `
+                    <div class="flex-shrink-0 w-24 h-24 m-1 ${rarityColors[item.rarity]} border-2 rounded-lg flex items-center justify-center">
+                        <div class="text-white text-xs text-center">${item.name}</div>
+                    </div>
+                `;
+            }
+            rouletteStrip.innerHTML = stripHTML;
+            
+            wonItem = items[Math.floor(Math.random() * items.length)];
+            
+            document.getElementById('rouletteModal').classList.remove('hidden');
+            
+            // Анимация с замедлением
+            let position = 0;
+            let speed = 24;
+            const targetPosition = -(150 * 100 - 200);
+            
+            function animateRoulette() {
+                position -= speed;
+                rouletteStrip.style.transform = `translateX(${position}px)`;
+                
+                // Замедляем скорость
+                speed *= 0.995;
+                
+                // Останавливаем когда достигли цели и скорость мала
+                if (position <= targetPosition && speed < 0.5) {
+                    rouletteStrip.style.transform = `translateX(${targetPosition}px)`;
+                    document.getElementById('claimBtn').style.display = 'block';
+                    return;
+                }
+                
+                requestAnimationFrame(animateRoulette);
+            }
+            
+            setTimeout(() => {
+                animateRoulette();
+            }, 100);
+            
+            // Принудительный показ кнопки через 10 секунд
+            setTimeout(() => {
+                document.getElementById('claimBtn').style.display = 'block';
+            }, 10000);       
+        }
+        
+
+        function claimReward() {
+            if (wonItem) {
+                alert(`Поздравляем! Вы получили: ${wonItem.name} (${wonItem.rarity})`);
+            }
+            
+            document.getElementById('rouletteModal').classList.add('hidden');
+            document.getElementById('claimBtn').style.display = 'none';
+            wonItem = null;
+            currentCaseType = null;
+        }
+
+        function navigateTo(page) {
+            if (page === 'pvp') {
+                window.location.href = 'pvp.html';
+            } else if (page === 'leaderboard') {
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
 </body>
 </html>
