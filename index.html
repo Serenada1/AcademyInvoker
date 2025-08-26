@@ -153,6 +153,11 @@
                     <span class="ml-1 text-yellow-400">маны</span>
                 </div>
                 <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center border border-yellow-600/50">
+                    <i class="fas fa-coins text-yellow-300 mr-2"></i>
+                    <span id="gold-counter" class="font-bold text-xl">0</span>
+                    <span class="ml-1 text-yellow-400">золота</span>
+                </div>
+                <div class="bg-gray-800 px-4 py-2 rounded-lg flex items-center border border-yellow-600/50">
                     <i class="fas fa-trophy text-yellow-300 mr-2"></i>
                     <span id="total-clicks" class="font-bold">0</span>
                 </div>
@@ -362,6 +367,7 @@
         };
         // DOM Elements
         const manaCounter = document.getElementById('mana-counter');
+        const goldCounter = document.getElementById('gold-counter');
         const totalClicks = document.getElementById('total-clicks');
         const clicksPerSecondElement = document.getElementById('clicks-per-second');
         const playerLevel = document.getElementById('player-level');
@@ -402,6 +408,7 @@
         function updateUI() {
             checkDailyReset();
             manaCounter.textContent = state.mana.toLocaleString();
+            goldCounter.textContent = state.gold.toLocaleString();
             totalClicks.textContent = state.clicks.toLocaleString();
             document.getElementById('clicks-per-second').textContent = state.clicksPerSecond;
             const dailyManaLimit = 1000 + (state.hasteUpgrades * 500);
@@ -536,7 +543,12 @@
         
         // Check if spell is on cooldown
         function isOnCooldown(spellName) {
-            const cooldownDuration = 12 * 60 * 60 * 1000; // 12 часов
+            let cooldownDuration;
+            if (spellName === 'Руна богатства') {
+                cooldownDuration = 24 * 60 * 60 * 1000; // 24 часа
+            } else {
+                cooldownDuration = 12 * 60 * 60 * 1000; // 12 часов
+            }
             const lastUsed = state.cooldowns[spellName];
             if (!lastUsed) return false;
             return (Date.now() - lastUsed) < cooldownDuration;
@@ -544,7 +556,12 @@
         
         // Get cooldown time left
         function getCooldownTimeLeft(spellName) {
-            const cooldownDuration = 12 * 60 * 60 * 1000; // 12 часов
+            let cooldownDuration;
+            if (spellName === 'Руна богатства') {
+                cooldownDuration = 24 * 60 * 60 * 1000; // 24 часа
+            } else {
+                cooldownDuration = 12 * 60 * 60 * 1000; // 12 часов
+            }
             const lastUsed = state.cooldowns[spellName];
             if (!lastUsed) return 0;
             return Math.max(0, cooldownDuration - (Date.now() - lastUsed));
@@ -556,7 +573,7 @@
             const cost = parseInt(button.getAttribute('data-cost'));
             const spell = button.getAttribute('data-skin');
             
-            if (spell !== 'Волшебство' && spell !== 'Руна богатства' && isOnCooldown(spell)) {
+            if (spell !== 'Волшебство' && spell !== 'Ускорение' && isOnCooldown(spell)) {
                 const timeLeft = getCooldownTimeLeft(spell);
                 const hours = Math.floor(timeLeft / (60 * 60 * 1000));
                 const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
@@ -587,7 +604,7 @@
                     state.inventory.push(spellData);
                 }
                 
-                if (spell !== 'Волшебство' && spell !== 'Ускорение' && spell !== 'Руна богатства') {
+                if (spell !== 'Волшебство' && spell !== 'Ускорение') {
                     state.cooldowns[spell] = Date.now(); // запускаем кулдаун
                 }
                 updateUI();
@@ -764,7 +781,7 @@
                         button.classList.add('bg-green-600', 'cursor-default');
                         button.disabled = true;
                     }
-                } else if (!isActive && onCooldown) {
+                } else if (!isActive && onCooldown && spell !== 'Руна богатства') {
                     const timeLeft = getCooldownTimeLeft(spell);
                     const hours = Math.floor(timeLeft / (60 * 60 * 1000));
                     const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
@@ -772,7 +789,16 @@
                     button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
                     button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
                     button.disabled = true;
-                } else if (!isActive && !onCooldown && (spell === 'Усиление урона' || (spell !== 'Волшебство' && spell !== 'Ускорение' && spell !== 'Руна богатства'))) {
+                } else if (!isActive && onCooldown && spell === 'Руна богатства') {
+                    const timeLeft = getCooldownTimeLeft(spell);
+                    const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                    const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                    button.innerHTML = `${hours}ч ${minutes}м`;
+                    button.classList.remove('bg-green-600', 'bg-yellow-600', 'hover:bg-yellow-700', 'cursor-default');
+                    button.classList.add('bg-transparent', 'cursor-default');
+                    button.style.border = 'none';
+                    button.disabled = true;
+                } else if (!isActive && !onCooldown && (spell === 'Усиление урона' || spell === 'Руна богатства')) {
                     button.innerHTML = 'Изучить';
                     button.classList.remove('bg-green-600', 'bg-gray-600', 'cursor-default');
                     button.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
@@ -789,6 +815,15 @@
                     button.classList.remove('bg-yellow-600', 'hover:bg-yellow-700', 'bg-green-600', 'bg-red-600');
                     button.classList.add('bg-transparent', 'cursor-default');
                     button.style.border = 'none';
+                } else if (spell === 'Руна богатства' && onCooldown) {
+                    const timeLeft = getCooldownTimeLeft(spell);
+                    const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                    const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                    button.innerHTML = `${hours}ч ${minutes}м`;
+                    button.classList.remove('bg-green-600', 'bg-yellow-600', 'hover:bg-yellow-700', 'cursor-default');
+                    button.classList.add('bg-transparent', 'cursor-default');
+                    button.style.border = 'none';
+                    button.disabled = true;
                 }
             });
         }, 1000);
