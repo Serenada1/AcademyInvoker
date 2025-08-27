@@ -20,38 +20,167 @@
 
         <!-- Cases Section -->
         <div class="pb-20">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Immortal Treasure -->
-                <div class="bg-gradient-to-br from-yellow-600 to-orange-600 rounded-xl p-4 text-center border-2 border-yellow-400 hover:scale-105 transition-transform cursor-pointer" onclick="openCase('immortal')">
-                    <div class="text-4xl mb-2">💎</div>
-                    <h3 class="text-lg font-bold mb-1">Immortal Treasure</h3>
-                    <p class="text-yellow-100 mb-2 text-sm">Легендарные предметы</p>
-                    <div class="text-xl font-bold text-yellow-200 mb-2">Бесплатно</div>
-                    <button class="bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg transition-colors w-full font-bold text-sm">
-                        Открыть
-                    </button>
+                <div class="relative rounded-xl border-2 border-yellow-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-48" onclick="openCase('immortal')">
+                    <img src="./images/ImmortalCase.png" alt="Immortal Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-4 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-lg font-bold mb-1 text-white">Immortal</h3>
+
+                        <div class="text-xl font-bold text-yellow-200 mb-2">Бесплатно</div>
+                        <button class="bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg transition-colors w-full font-bold text-sm">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mythical Treasure -->
+                <div class="relative rounded-xl border-2 border-purple-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-48" onclick="openCase('mythical')">
+                    <img src="./images/MysteryCase.png" alt="Mythical Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-4 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-lg font-bold mb-1 text-white">Mythical</h3>
+                        <div class="text-xl font-bold text-purple-200 mb-2">Бесплатно</div>
+                        <button class="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg transition-colors w-full font-bold text-sm">
+                            Открыть
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Rare Treasure -->
-                <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-4 text-center border-2 border-purple-400 hover:scale-105 transition-transform cursor-pointer" onclick="openCase('rare')">
-                    <div class="text-4xl mb-2">🎁</div>
-                    <h3 class="text-lg font-bold mb-1">Rare Treasure</h3>
-                    <p class="text-purple-100 mb-2 text-sm">Редкие предметы</p>
-                    <div class="text-xl font-bold text-purple-200 mb-2">Бесплатно</div>
-                    <button class="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg transition-colors w-full font-bold text-sm">
-                        Открыть
-                    </button>
+                <div class="relative rounded-xl border-2 border-blue-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-48" onclick="openCase('rare')">
+                    <img src="./images/RareCase.png" alt="Rare Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-4 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-lg font-bold mb-1 text-white">Rare</h3>
+                        <div class="text-xl font-bold text-blue-200 mb-2">Бесплатно</div>
+                        <button class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg transition-colors w-full font-bold text-sm">
+                            Открыть
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Common Treasure -->
-                <div class="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl p-4 text-center border-2 border-blue-400 hover:scale-105 transition-transform cursor-pointer" onclick="openCase('common')">
-                    <div class="text-4xl mb-2">📦</div>
-                    <h3 class="text-lg font-bold mb-1">Common Treasure</h3>
-                    <p class="text-blue-100 mb-2 text-sm">Обычные предметы</p>
-                    <div class="text-xl font-bold text-blue-200 mb-2">Бесплатно</div>
-                    <button class="bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-lg transition-colors w-full font-bold text-sm">
-                        Открыть
-                    </button>
+                <div class="relative rounded-xl border-2 border-gray-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-48" onclick="openCase('common')">
+                    <img src="./images/CommonCase.png" alt="Common Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-4 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-lg font-bold mb-1 text-white">Common</h3>
+                        <div class="text-xl font-bold text-gray-200 mb-2">Бесплатно</div>
+                        <button class="bg-gray-500 hover:bg-gray-400 px-4 py-2 rounded-lg transition-colors w-full font-bold text-sm">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Cases Section -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <!-- 1Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('1case')">
+                    <img src="./images/1Case.png" alt="1Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">1Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 2Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('2case')">
+                    <img src="./images/2Case.png" alt="2Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">2Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 3Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('3case')">
+                    <img src="./images/3Case.png" alt="3Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">3Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 4Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('4case')">
+                    <img src="./images/4Case.png" alt="4Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">4Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 5Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('5case')">
+                    <img src="./images/5Case.png" alt="5Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">5Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 6Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('6case')">
+                    <img src="./images/6Case.png" alt="6Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">6Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 7Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('7case')">
+                    <img src="./images/7Case.png" alt="7Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">7Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 8Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('8case')">
+                    <img src="./images/8Case.png" alt="8Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">8Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 9Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('9case')">
+                    <img src="./images/9Case.png" alt="9Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">9Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 10Case -->
+                <div class="relative rounded-xl border-2 border-green-400 hover:scale-105 transition-transform cursor-pointer overflow-hidden min-h-32" onclick="openCase('10case')">
+                    <img src="./images/10Case.png" alt="10Case" class="w-full h-full object-cover absolute inset-0">
+                    <div class="relative bg-black bg-opacity-50 p-2 text-center h-full flex flex-col justify-end">
+                        <h3 class="text-sm font-bold mb-1 text-white">10Case</h3>
+                        <button class="bg-green-500 hover:bg-green-400 px-2 py-1 rounded text-xs font-bold">
+                            Открыть
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -118,6 +247,11 @@
             common: [
                 { name: 'Pudge Hat', rarity: 'Common', price: 8 },
                 { name: 'Sven Sword', rarity: 'Common', price: 12 }
+            ],
+            mythical: [
+                { name: 'Mystery Item', rarity: 'Mythical', price: 100 },
+                { name: 'Ancient Relic', rarity: 'Mythical', price: 200 },
+                { name: 'Mystic Orb', rarity: 'Mythical', price: 150 }
             ]
         };
 
@@ -126,7 +260,7 @@
 
         function openCase(caseType) {
             currentCaseType = caseType;
-            const icons = { immortal: '💎', rare: '🎁', common: '📦' };
+            const icons = { immortal: '💎', rare: '🎁', common: '📦', mythical: '🔮' };
             document.getElementById('caseIcon').textContent = icons[caseType];
             document.getElementById('openingModal').classList.remove('hidden');
             
@@ -155,7 +289,8 @@
                 const rarityColors = {
                     'Immortal': 'border-yellow-400 bg-yellow-900',
                     'Rare': 'border-purple-400 bg-purple-900',
-                    'Common': 'border-blue-400 bg-blue-900'
+                    'Common': 'border-blue-400 bg-blue-900',
+                    'Mythical': 'border-purple-500 bg-purple-800'
                 };
                 stripHTML += `
                     <div class="flex-shrink-0 w-24 h-24 m-1 ${rarityColors[item.rarity]} border-2 rounded-lg flex items-center justify-center">
